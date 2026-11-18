@@ -12,8 +12,8 @@ I riferimenti comuni sono in `../../condivisi/`:
 - `checklist-aeo.md`: la sezione "FAQ prodotto" dice quali punti valgono qui;
 - `schema-org.md`;
 - `archivio-contenuti.md`;
-- `scripts/verifica_faq_schema.py`: controlla che FAQ e schema coincidano;
-- `scripts/analizza_gsc.py`: le query di Search Console della pagina prodotto e le altre pagine che le contendono.
+- `../../condivisi/scripts/verifica_faq_schema.py`: controlla che FAQ e schema coincidano;
+- `../../condivisi/scripts/analizza_gsc.py`: le query di Search Console della pagina prodotto e le altre pagine che le contendono.
 
 **Niente content brief.** Le FAQ sono un contenuto breve e verificabile riga per riga: si scrivono subito e il consulente rivede la bozza. Le domande aperte che pesano sulle risposte stanno nel file, in una sezione apposita. Nuove domande per il cliente e nuove incoerenze si propongono, ma si aggiungono ai file del repo solo con l'ok del consulente.
 

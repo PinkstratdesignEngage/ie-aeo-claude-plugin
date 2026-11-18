@@ -12,8 +12,8 @@ I riferimenti comuni sono in `../../condivisi/`:
 - `checklist-aeo.md`: i criteri dell'analisi e i controlli prima della consegna;
 - `schema-org.md`;
 - `archivio-contenuti.md`: dove salvare, stati e modelli di struttura;
-- `scripts/verifica_faq_schema.py`: controlla che FAQ e schema coincidano;
-- `scripts/analizza_gsc.py`: incrocia le coppie query-pagina di Google Search Console e trova le query da proteggere e le possibili cannibalizzazioni.
+- `../../condivisi/scripts/verifica_faq_schema.py`: controlla che FAQ e schema coincidano;
+- `../../condivisi/scripts/analizza_gsc.py`: incrocia le coppie query-pagina di Google Search Console e trova le query da proteggere e le possibili cannibalizzazioni.
 
 Il processo ha due punti di arresto: il piano e il modello si applicano solo dopo un'approvazione esplicita del consulente.
 

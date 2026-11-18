@@ -13,8 +13,8 @@ I riferimenti comuni a tutte le skill di contenuto sono nella cartella `condivis
 - `checklist-aeo.md`: i controlli prima della consegna;
 - `schema-org.md`: i modelli JSON-LD;
 - `archivio-contenuti.md`: dove salvare e come gestire gli stati;
-- `scripts/verifica_faq_schema.py`: controlla che FAQ e schema coincidano;
-- `scripts/analizza_gsc.py`: con `--tema`, le pagine e le query di Search Console già legate al tema.
+- `../../condivisi/scripts/verifica_faq_schema.py`: controlla che FAQ e schema coincidano;
+- `../../condivisi/scripts/analizza_gsc.py`: con `--tema`, le pagine e le query di Search Console già legate al tema.
 
 ## 1. Raccogli il brief del consulente
 

@@ -8,7 +8,7 @@
       "name": "ie-aeo",
       "source": "./",
       "description": "Strumenti per i progetti AEO: knowledge base del cliente, creazione e revisione dei contenuti. Come funziona: https://ie-aeo-plugin-tutorial.vercel.app/",
-      "version": "0.32.2"
+      "version": "0.32.3"
     }
   ]
 }
