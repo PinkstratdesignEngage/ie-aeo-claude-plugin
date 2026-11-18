@@ -1,0 +1,471 @@
+<title>{{TITOLO}}</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap">
+<style>
+/* Audit tecnico AEO. Segue il profilo «app» del design system dell'agenzia: fondi chiari e freddi,
+   testo ardesia, giallo solo per quello che richiede una decisione. Gli stati si leggono
+   dalla forma prima che dal colore (● ■ ▼ ○), così restano chiari anche a chi non
+   distingue i colori e in stampa. */
+:root{
+  color-scheme: light;
+  --ground:#F5F7FA; --surface:#FFFFFF; --surface-2:#F9FAFB; --surface-3:#F0F3F7;
+  --ink:#1F2733; --ink-2:#4B5565; --ink-3:#656E7D;
+  --rule:#E5E9EF; --rule-strong:#CBD3DE;
+  --accent:#FDC300; --accent-hover:#F2BA00; --on-accent:#1F2733; --accent-text:#7A5C00;
+  --accent-soft:#FFF7D6; --accent-line:#F5DE8A; --accent-bar:#F8D460;
+  --sel-bg:#EAF0F7; --sel-ink:#1F3A5C; --sel-line:#C3D2E4;
+  --data:#5B6E8C; --data-2:#A9B7CB; --data-3:#DCE3EC;
+  --risk:#B4232C; --risk-soft:#FCEBEC; --good:#1F7A4D; --good-soft:#E6F4EC;
+  --scrim:#0B1220;
+  --shadow-1:0 1px 2px rgba(16,24,40,.05);
+  --shadow-2:0 8px 24px rgba(16,24,40,.10), 0 1px 3px rgba(16,24,40,.06);
+  --f-body:"Manrope",Arial,Helvetica,sans-serif;
+  --f-mono:"Roboto Mono",ui-monospace,Menlo,monospace;
+  --r:12px; --r-sm:8px; --top:60px; --sb:248px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  color-scheme: dark;
+  --ground:#0F131A; --surface:#161B23; --surface-2:#1B212B; --surface-3:#222936;
+  --ink:#E8ECF2; --ink-2:#B4BDCA; --ink-3:#8791A1;
+  --rule:#29313D; --rule-strong:#3B4554;
+  --accent:#FDC300; --accent-hover:#FFD233; --on-accent:#1F2733; --accent-text:#FDD34D;
+  --accent-soft:#2E2913; --accent-line:#5C4D12; --accent-bar:#B88D00;
+  --sel-bg:#21304A; --sel-ink:#D7E3F4; --sel-line:#34496A;
+  --data:#8EA3C4; --data-2:#4F607C; --data-3:#2C3646;
+  --risk:#F2848B; --risk-soft:#3A1D21; --good:#6FCF9F; --good-soft:#163026;
+  --scrim:#000000;
+  --shadow-1:0 1px 2px rgba(0,0,0,.3); --shadow-2:0 10px 28px rgba(0,0,0,.5);
+}}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --ground:#0F131A; --surface:#161B23; --surface-2:#1B212B; --surface-3:#222936;
+  --ink:#E8ECF2; --ink-2:#B4BDCA; --ink-3:#8791A1;
+  --rule:#29313D; --rule-strong:#3B4554;
+  --accent:#FDC300; --accent-hover:#FFD233; --on-accent:#1F2733; --accent-text:#FDD34D;
+  --accent-soft:#2E2913; --accent-line:#5C4D12; --accent-bar:#B88D00;
+  --sel-bg:#21304A; --sel-ink:#D7E3F4; --sel-line:#34496A;
+  --data:#8EA3C4; --data-2:#4F607C; --data-3:#2C3646;
+  --risk:#F2848B; --risk-soft:#3A1D21; --good:#6FCF9F; --good-soft:#163026;
+  --scrim:#000000;
+  --shadow-1:0 1px 2px rgba(0,0,0,.3); --shadow-2:0 10px 28px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--ground);color:var(--ink);font:400 14px/1.55 var(--f-body);
+  -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+button{font:inherit;color:inherit}
+a{color:var(--sel-ink)}
+.app{display:grid;grid-template-columns:var(--sb) 1fr;grid-template-rows:var(--top) 1fr;
+  min-height:100vh;min-height:100dvh}
+.top{grid-column:1/-1;display:flex;align-items:center;gap:12px;padding:0 clamp(12px,2vw,20px);
+  background:var(--surface);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:30}
+.mark{width:20px;height:20px;background:var(--accent);flex:none;
+  clip-path:polygon(0 0,64% 0,100% 36%,100% 100%,64% 100%,64% 36%,0 36%)}
+.top h1{font:700 .98rem/1.2 var(--f-body);letter-spacing:-.015em;margin:0;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:48vw}
+.sub{color:var(--ink-3);font-size:.78rem}
+.grow{flex:1 1 auto;min-width:0}
+.iconbtn{width:30px;height:30px;display:grid;place-content:center;border:1px solid transparent;
+  background:none;border-radius:var(--r-sm);cursor:pointer;color:var(--ink-2);flex:none}
+.iconbtn:hover{background:var(--surface-3);border-color:var(--rule)}
+.ico{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+/* Menu laterale: i quattro gruppi */
+.side{background:var(--surface);border-right:1px solid var(--rule);padding:14px 12px 24px;
+  position:sticky;top:var(--top);align-self:start;max-height:calc(100vh - var(--top));overflow:auto}
+.cap{font:600 .72rem/1.3 var(--f-body);color:var(--ink-3);margin:0 0 8px}
+.gv{display:flex;align-items:flex-start;gap:9px;width:100%;padding:9px 10px;background:none;
+  border:0;border-left:3px solid transparent;border-radius:var(--r-sm);cursor:pointer;text-align:left}
+.gv:hover{background:var(--surface-3)}
+.gv[aria-current="true"]{background:var(--accent-soft);border-left-color:var(--accent)}
+.gv b{display:block;font:650 .86rem/1.3 var(--f-body)}
+.gv span{display:block;font-size:.74rem;color:var(--ink-3);margin-top:1px}
+.seg{font-family:var(--f-mono);font-size:.9rem;line-height:1.1;flex:none;margin-top:2px}
+.seg.ok{color:var(--good)} .seg.critico{color:var(--risk)}
+.seg.attenzione{color:var(--accent-text)} .seg.nv{color:var(--ink-3)}
+.meta{border-top:1px solid var(--rule);margin-top:14px;padding-top:12px;color:var(--ink-3);font-size:.76rem}
+.meta b{color:var(--ink)}
+
+/* Pagina */
+.main{padding:clamp(16px,3vw,32px);max-width:1180px;width:100%}
+.intro{margin:0 0 22px}
+.intro h2{font:700 clamp(1.2rem,2vw,1.6rem)/1.25 var(--f-body);letter-spacing:-.015em;margin:0 0 6px;
+  text-wrap:balance}
+.intro p{margin:0;color:var(--ink-2);max-width:68ch}
+/* Sommario: un quadrante solo, i temi che lo compongono e la prima mossa. Uno e non due
+   (SEO/AEO) perche' la gran parte delle verifiche vale per tutti e due i mondi: due
+   quadranti costruiti sugli stessi dati si muovono sempre insieme, e la differenza che
+   resta e' rumore che qualcuno legge come un giudizio. */
+.somm{display:grid;grid-template-columns:196px minmax(0,1fr);gap:24px;align-items:start;
+  margin:16px 0 0;padding:0 0 20px;border-bottom:1px solid var(--rule)}
+.somm[hidden]{display:none}
+.somm .quad{text-align:center}
+.somm svg{display:block;margin:0 auto;max-width:100%}
+.somm .qn{font:700 .7rem/1 var(--f-body);letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);margin-top:8px}
+.gval{font:800 2.8rem/1 var(--f-body);fill:var(--ink)}
+.gsu{font:600 .72rem/1 var(--f-body);fill:var(--ink-3)}
+.traccia{fill:none;stroke:var(--data-3);stroke-width:13;stroke-linecap:round}
+.arco{fill:none;stroke:var(--accent);stroke-width:13;stroke-linecap:round;
+  transition:stroke-dashoffset .9s cubic-bezier(.4,0,.2,1)}
+.temi{display:grid;gap:7px;margin:0 0 14px}
+.tema{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 10px;align-items:baseline;
+  font-size:.84rem}
+.tema b{font-weight:600;min-width:0}
+.tema .pt{font:500 .74rem/1 var(--f-mono);color:var(--ink-3);white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+.tema .bar{grid-column:1/-1;height:4px;border-radius:2px;background:var(--data-3);overflow:hidden}
+.tema .bar i{display:block;height:100%;border-radius:2px}
+.mossa{max-width:68ch;padding:11px 13px;background:var(--accent-soft);border:1px solid var(--accent-line);
+  border-radius:var(--r-sm);font-size:.86rem;color:var(--ink-2)}
+.mossa[hidden]{display:none}
+.mossa b{display:block;font:700 .7rem/1 var(--f-body);letter-spacing:.08em;
+  text-transform:uppercase;color:var(--accent-text);margin-bottom:4px}
+@media (max-width:760px){.somm{grid-template-columns:1fr}}
+.sez{margin:0 0 30px;scroll-margin-top:calc(var(--top) + 12px)}
+.sh{display:flex;align-items:baseline;gap:10px;margin:0 0 4px}
+.sh h3{font:700 1.08rem/1.3 var(--f-body);margin:0}
+.sh .q{color:var(--ink-3);font-size:.8rem}
+.sd{margin:0 0 12px;color:var(--ink-2);font-size:.86rem}
+.griglia{display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:12px}
+.ind{background:var(--surface);border:1px solid var(--rule);border-radius:var(--r);padding:13px 14px;
+  box-shadow:var(--shadow-1);display:flex;flex-direction:column;gap:3px;text-align:left;cursor:pointer;
+  width:100%}
+.ind:hover{border-color:var(--rule-strong)}
+.ind.critico{border-left:3px solid var(--risk)}
+.ind.attenzione{border-left:3px solid var(--accent)}
+.ind .et{display:flex;align-items:center;gap:6px;font:600 .74rem/1.3 var(--f-body);color:var(--ink-3)}
+.ind .et .grow{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ind .val{font:750 1.32rem/1.2 var(--f-body);letter-spacing:-.01em;margin:1px 0 0}
+.ind .det{font-size:.78rem;color:var(--ink-2)}
+.ind .piu{font-size:.72rem;color:var(--ink-3);margin-top:4px;display:flex;align-items:center;gap:4px}
+
+/* Finestra di spiegazione */
+.modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:16px}
+.velo{position:absolute;inset:0;background:var(--scrim);opacity:.45}
+.box{position:relative;background:var(--surface);border-radius:16px;max-width:640px;width:100%;
+  max-height:86vh;display:flex;flex-direction:column;box-shadow:var(--shadow-2)}
+.box header{display:flex;align-items:flex-start;gap:10px;padding:16px 18px 10px;border-bottom:1px solid var(--rule)}
+.box header h4{font:700 1.04rem/1.3 var(--f-body);margin:0 0 2px}
+.box .bd{padding:14px 18px 20px;overflow:auto}
+.box h5{font:650 .84rem/1.3 var(--f-body);color:var(--ink-3);margin:14px 0 5px}
+.box h5:first-child{margin-top:0}
+.box p{margin:0 0 4px;color:var(--ink-2);max-width:62ch}
+.riq{border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 var(--r-sm) var(--r-sm) 0;
+  padding:9px 12px;margin:10px 0 0;color:var(--ink);font-size:.86rem}
+.lista{margin:6px 0 0;padding:0;list-style:none;font:400 .76rem/1.5 var(--f-mono);
+  max-height:230px;overflow:auto;border:1px solid var(--rule);border-radius:var(--r-sm)}
+.lista li{padding:4px 9px;border-bottom:1px solid var(--rule);word-break:break-all}
+.lista li:last-child{border-bottom:0}
+.lt{display:flex;align-items:baseline;gap:10px;margin:14px 0 5px}
+.lt h5{margin:0;flex:1 1 auto;min-width:0}
+.copia{display:inline-flex;align-items:center;gap:5px;flex:none;padding:3px 9px;cursor:pointer;
+  border:1px solid var(--rule-strong);border-radius:6px;background:var(--surface-2);
+  color:var(--ink-2);font:600 .72rem/1.5 var(--f-body);white-space:nowrap}
+.copia:hover{background:var(--surface-3);border-color:var(--ink-3)}
+.copia.ok{background:var(--sel-bg);border-color:var(--sel-line);color:var(--sel-ink)}
+.copia .ico{width:13px;height:13px}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:2px 8px;border:1px solid var(--rule-strong);
+  border-radius:6px;font:600 .72rem/1.6 var(--f-body);color:var(--ink-2);background:var(--surface-2)}
+.foot{border-top:1px solid var(--rule);margin-top:8px;padding:16px 0 30px;color:var(--ink-3);font-size:.8rem}
+.foot p{margin:0 0 6px;max-width:56ch}
+
+.mtog{display:none}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .side{position:fixed;top:var(--top);bottom:0;left:0;width:var(--sb);z-index:25;max-height:none;
+    transform:translateX(-100%);transition:transform .2s}
+  .side.apri{transform:none;box-shadow:var(--shadow-2)}
+  .mtog{display:grid}
+  .top .sub{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="app">
+  <header class="top">
+    <button class="iconbtn mtog" id="b-menu" aria-label="Apri i gruppi"><svg class="ico" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <span class="mark" aria-hidden="true"></span>
+    <h1 id="t-nome">Audit tecnico</h1>
+    <span class="sub" id="t-data"></span>
+    <span class="grow"></span>
+    <button class="iconbtn" id="b-metodo" aria-label="Come è stato misurato"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg></button>
+  </header>
+
+  <nav class="side" id="side" aria-label="Gruppi">
+    <p class="cap">Le quattro domande</p>
+    <div id="gruppi"></div>
+    <div class="meta" id="meta"></div>
+  </nav>
+
+  <main class="main">
+    <div class="intro">
+      <h2 id="sintesi">Caricamento…</h2>
+      <p id="sintesi-sotto"></p>
+      <div class="somm" id="somm" hidden>
+        <div class="quad">
+          <svg viewBox="0 0 180 150" id="g-svg" role="img" aria-label="Prontezza tecnica">
+            <path class="traccia" d="M 29.38 125 A 70 70 0 1 1 150.62 125"/>
+            <path class="arco" id="g-arco" d="M 29.38 125 A 70 70 0 1 1 150.62 125"
+                  stroke-dasharray="293.2" stroke-dashoffset="293.2"/>
+            <text class="gval" id="g-val" x="90" y="96" text-anchor="middle">–</text>
+            <text class="gsu" x="90" y="116" text-anchor="middle">su 100</text>
+          </svg>
+          <div class="qn">Prontezza tecnica</div>
+        </div>
+        <div>
+          <div class="temi" id="temi"></div>
+          <div class="mossa" id="mossa" hidden></div>
+        </div>
+      </div>
+    </div>
+    <div id="sezioni"></div>
+    <footer class="foot" id="metodo-piede"></footer>
+  </main>
+</div>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="m-tit">
+  <div class="velo" data-chiudi="1"></div>
+  <div class="box">
+    <header>
+      <div class="grow"><div class="sub" id="m-gruppo"></div><h4 id="m-tit"></h4></div>
+      <button class="iconbtn" data-chiudi="1" aria-label="Chiudi"><svg class="ico" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </header>
+    <div class="bd" id="m-corpo"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var D=null;
+  var SEGNO={ok:"●",attenzione:"■",critico:"▼","non-verificato":"○"};
+  var PAROLA={ok:"in linea",attenzione:"da guardare",critico:"da sistemare","non-verificato":"non misurato"};
+  function $(i){return document.getElementById(i)}
+  function el(t,c,x){var n=document.createElement(t); if(c)n.className=c; if(x!=null)n.textContent=x; return n}
+  function cls(s){return s==="non-verificato"?"nv":s}
+  function giorno(s){var d=new Date(s);return isNaN(d)?s:d.toLocaleDateString("it-IT",{day:"numeric",month:"long",year:"numeric"})}
+
+  fetch("risultati.json").then(function(r){if(!r.ok)throw new Error(r.status);return r.json()})
+    .then(function(j){D=j;disegna()})
+    .catch(function(){
+      $("sintesi").textContent="I dati non si sono caricati";
+      $("sintesi-sotto").textContent="La pagina va ripubblicata insieme al file risultati.json dell'ultima scansione.";
+    });
+
+  // Il punteggio arriva gia' calcolato da analizza_audit.py: qui non si ricalcola niente,
+  // altrimenti due posti direbbero due numeri. I pesi stanno nello script, in TEMI_PUNTEGGIO.
+  var ARCO=293.2;  // lunghezza dell'arco da 240 gradi, raggio 70
+  function nit(n){return String(n).replace(".",",")}
+  function colore(s){return s==="critico"?"var(--risk)":s==="attenzione"?"var(--accent)":"var(--good)"}
+
+  function sommario(){
+    var S=D.sommario;
+    if(!S||S.punteggio==null)return;          // audit vecchio, senza sommario: si salta
+    $("g-val").textContent=S.punteggio;
+    $("g-svg").setAttribute("aria-label","Prontezza tecnica: "+S.punteggio+" su 100");
+
+    var box=$("temi"); box.replaceChildren();
+    S.temi.forEach(function(t){
+      var r=el("div","tema");
+      r.append(el("b",null,t.nome), el("span","pt",nit(t.punti)+" / "+nit(t.peso)));
+      var b=el("span","bar"), f=el("i");
+      f.style.width=Math.max(0,Math.round(t.punti/t.peso*100))+"%";
+      f.style.background=colore(t.stato);
+      b.append(f); r.append(b); box.append(r);
+    });
+
+    var m=S.prima_mossa;
+    if(m&&m.vale>0){
+      var aperti=(S.mondi.assistenti||0)+(S.mondi.motori||0)+(S.mondi.entrambi||0);
+      var n=$("mossa"); n.replaceChildren();
+      n.append(el("b",null,"La prima mossa"), el("span",null,
+        m.tema+": è il tema che costa di più, "+m.vale+" punti su 100. "+
+        "Dei "+aperti+" indicatori aperti, "+(S.mondi.entrambi||0)+
+        " toccano sia i motori di ricerca sia gli assistenti AI."));
+      n.hidden=false;
+    }
+    if(S.non_pesati&&S.non_pesati.length){
+      console.warn("Verifiche fuori dal punteggio, da classificare in tema_di():",S.non_pesati);
+    }
+    $("somm").hidden=false;
+    requestAnimationFrame(function(){ setTimeout(function(){
+      $("g-arco").setAttribute("stroke-dashoffset",String(ARCO*(1-S.punteggio/100)));
+    },60) });
+  }
+
+  function disegna(){
+    var sito=D.sito.replace(/^https?:\/\//,"").replace(/\/$/,"");
+    $("t-nome").textContent="Audit tecnico "+sito;
+    $("t-data").textContent="scansione del "+giorno(D.data);
+    document.title="Audit tecnico "+sito;
+
+    var critici=0,attenzioni=0;
+    D.indicatori.forEach(function(i){ if(i.stato==="critico")critici++; else if(i.stato==="attenzione")attenzioni++ });
+    $("sintesi").textContent = critici ? critici+(critici===1?" cosa blocca":" cose bloccano")+" la lettura del sito da parte degli assistenti"
+      : attenzioni ? attenzioni+(attenzioni===1?" indicatore da guardare":" indicatori da guardare")+", niente di bloccante"
+      : "Il sito è leggibile dagli assistenti su tutti gli indicatori verificati";
+    $("sintesi-sotto").textContent="Abbiamo letto "+D.pagine_scansionate+" pagine come le legge un assistente AI, "
+      +"e provato l'accesso di "+(D.indicatori.find(function(i){return i.id==="crawler-citazione"})||{}).base
+      +" crawler con una richiesta vera. Ogni indicatore si apre e spiega cosa misura.";
+
+    sommario();
+
+    var ordine=["visibilita","comprensione","copertura","velocita"];
+    var nav=$("gruppi"), sezioni=$("sezioni");
+    nav.replaceChildren(); sezioni.replaceChildren();
+
+    ordine.forEach(function(g){
+      var G=D.gruppi[g]; if(!G)return;
+      var voci=D.indicatori.filter(function(i){return i.gruppo===g});
+
+      var b=el("button","gv"); b.type="button";
+      b.append(el("span","seg "+cls(G.stato),SEGNO[G.stato]));
+      var t=el("span","grow");
+      t.append(el("b",null,G.nome), el("span",null,
+        G.critici? G.critici+" da sistemare" : G.attenzioni? G.attenzioni+" da guardare" : "tutto in linea"));
+      b.append(t);
+      b.addEventListener("click",function(){
+        document.getElementById("sez-"+g).scrollIntoView({behavior:"smooth",block:"start"});
+        $("side").classList.remove("apri");
+      });
+      nav.append(b);
+
+      var s=el("section","sez"); s.id="sez-"+g;
+      var h=el("div","sh"); h.append(el("h3",null,G.nome), el("span","q",G.domanda));
+      s.append(h);
+      s.append(el("p","sd", voci.length+" indicatori · "
+        +(G.critici? G.critici+" da sistemare, " : "")
+        +(G.attenzioni? G.attenzioni+" da guardare" : G.critici? "" : "tutti in linea")));
+      var gr=el("div","griglia");
+      voci.forEach(function(i){ gr.append(scheda(i)) });
+      s.append(gr);
+      sezioni.append(s);
+    });
+
+    var m=$("meta"); m.replaceChildren();
+    m.append(el("div",null,""),el("div",null,""));
+    var r1=el("div"); r1.append(el("b",null,String(D.pagine_scansionate))," pagine lette");
+    var r2=el("div",null, D.sitemap_url? D.sitemap_url+" dichiarate nella sitemap":"");
+    m.replaceChildren(r1,r2);
+
+    var p=$("metodo-piede"); p.replaceChildren(el("div","cap","Come abbiamo misurato"));
+    Object.keys(D.limiti||{}).forEach(function(k){ p.append(el("p",null,D.limiti[k])) });
+    p.append(el("p",null,"Gli stati si leggono dalla forma: ● in linea · ■ da guardare · ▼ da sistemare · ○ non misurato."));
+  }
+
+  function scheda(i){
+    var b=el("button","ind "+(i.stato==="critico"?"critico":i.stato==="attenzione"?"attenzione":"")); b.type="button";
+    var et=el("div","et");
+    et.append(el("span","seg "+cls(i.stato),SEGNO[i.stato]), el("span","grow",i.titolo));
+    b.append(et, el("div","val",String(i.valore)));
+    if(i.dettaglio) b.append(el("div","det",i.dettaglio));
+    var piu=el("div","piu"); piu.append(el("span",null,"Cosa vuol dire"));
+    b.append(piu);
+    b.setAttribute("aria-label",i.titolo+": "+i.valore+", "+PAROLA[i.stato]+". Apri la spiegazione.");
+    b.addEventListener("click",function(){apri(i)});
+    return b;
+  }
+
+  /* Le righe dell'elenco sono testo da leggere ("url — nessun H1", "GPTBot: bloccato").
+     Per Excel le spezziamo in colonne sul separatore, così l'URL e il motivo finiscono in
+     celle diverse. I due punti separano solo se li segue uno spazio: in "https://" li segue
+     una barra, quindi un URL da solo resta in una colonna sola. I tre separatori — ← →
+     devono restare uguali a quelli di colonne() in analizza_audit.py. */
+  function colonne(s){
+    var m=/^(.*?) [—←→] (.*)$/.exec(s);
+    if(!m) m=/^([^\s:]+): (.*)$/.exec(s);
+    return m? [m[1],m[2]] : [s];
+  }
+
+  /* Ripiego per quando gli appunti moderni non ci sono (pagina aperta da file://). */
+  function copiaVecchiaManiera(testo){
+    var ta=document.createElement("textarea");
+    ta.value=testo; ta.setAttribute("readonly","");
+    ta.style.cssText="position:fixed;top:0;left:-9999px;opacity:0";
+    document.body.append(ta);
+    ta.select(); ta.setSelectionRange(0,testo.length);
+    var ok=false;
+    try{ ok=document.execCommand("copy") }catch(e){ ok=false }
+    ta.remove();
+    return ok;
+  }
+
+  function bottoneCopia(righe){
+    var b=el("button","copia"); b.type="button";
+    b.innerHTML='<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">'
+      +'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/></svg>';
+    var et=el("span",null,"Copia"); b.append(et);
+    b.setAttribute("aria-label","Copia le "+righe.length+" righe dell'elenco negli appunti");
+    function esito(testo,riuscito){
+      et.textContent=testo; b.classList.toggle("ok",!!riuscito);
+      clearTimeout(b._t);
+      b._t=setTimeout(function(){ et.textContent="Copia"; b.classList.remove("ok") },2500);
+    }
+    b.addEventListener("click",function(){
+      var testo=righe.map(function(r){ return colonne(r).join("\t") }).join("\n");
+      var n=righe.length;
+      function fatto(){ esito(n+(n===1?" riga copiata":" righe copiate"),true) }
+      function fallito(){ esito("non riesco a copiare") }
+      function ripiego(){ copiaVecchiaManiera(testo)? fatto() : fallito() }
+      if(navigator.clipboard && window.isSecureContext)
+        navigator.clipboard.writeText(testo).then(fatto,ripiego);
+      else ripiego();
+    });
+    return b;
+  }
+
+  function apri(i){
+    var G=D.gruppi[i.gruppo]||{};
+    $("m-gruppo").textContent=G.nome||"";
+    $("m-tit").textContent=i.titolo;
+    var c=$("m-corpo"); c.replaceChildren();
+
+    var tg=el("p"); tg.style.margin="0 0 10px";
+    tg.append(el("span","tag",SEGNO[i.stato]+" "+PAROLA[i.stato]));
+    if(i.valore!=null){ var v=el("span","tag",String(i.valore)); v.style.marginLeft="6px"; tg.append(v) }
+    if(i.base && String(i.valore).indexOf(" su ")<0){
+      var bse=el("span","tag","su "+i.base); bse.style.marginLeft="6px"; tg.append(bse) }
+    c.append(tg);
+
+    c.append(el("h5",null,"Cosa misura"), el("p",null,i.spiegazione));
+    c.append(el("h5",null,"Cosa comporta"));
+    var cons=el("p",null,i.conseguenza); c.append(cons);
+    if(i.dettaglio) c.append(el("div","riq",i.dettaglio));
+    if(i.elenco && i.elenco.length){
+      var tit=el("div","lt");
+      tit.append(el("h5",null,(i.etichetta_elenco||"Pagine interessate")
+        +(i.elenco_totale>i.elenco.length? " (prime "+i.elenco.length+" di "+i.elenco_totale+")":" ("+i.elenco_totale+")")));
+      tit.append(bottoneCopia(i.elenco));
+      c.append(tit);
+      var ul=el("ul","lista");
+      i.elenco.forEach(function(x){ ul.append(el("li",null,x)) });
+      c.append(ul);
+    }
+    apriModale();
+  }
+
+  function metodo(){
+    $("m-gruppo").textContent="Metodo";
+    $("m-tit").textContent="Come è stato misurato";
+    var c=$("m-corpo"); c.replaceChildren();
+    Object.keys(D.limiti||{}).forEach(function(k){ c.append(el("p",null,D.limiti[k])) });
+    c.append(el("div","riq","L'audit legge le pagine senza eseguire JavaScript, che è il modo in cui "
+      +"le leggono GPTBot, ClaudeBot e PerplexityBot. Non è un limite dello strumento: è il punto."));
+    apriModale();
+  }
+
+  function apriModale(){ $("modal").hidden=false }
+  function chiudiModale(){ $("modal").hidden=true }
+
+  $("modal").addEventListener("click",function(e){
+    if(e.target.closest("[data-chiudi]")) chiudiModale();
+  });
+  $("b-metodo").addEventListener("click",function(){ if(D)metodo() });
+  $("b-menu").addEventListener("click",function(){ $("side").classList.toggle("apri") });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape")chiudiModale() });
+})();
+</script>

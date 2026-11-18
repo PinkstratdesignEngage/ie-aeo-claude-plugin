@@ -1,0 +1,762 @@
+<title>{{TITOLO}}</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: in cima il piano di lavoro unico; le schede sotto spiegano da dove viene ogni azione. */
+:root {
+  --bg: #f7f6f1; --surface: #ffffff; --ink: #1d1c17; --muted: #6a6757; --line: #e4e1d4;
+  --accent: #f2b705; --accent-soft: #fdf3cf; --accent-ink: #6e5200;
+  --alta: #b4410e; --media: #9a6a00; --bassa: #77756a; --ok: #2f7a4b;
+  --seq-p: #2b2a23; --seq-c: #f2b705; --seq-a: #c4bfab;
+  --font-ui: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #14130f; --surface: #1d1c17; --ink: #f2f0e6; --muted: #a9a591; --line: #33312a;
+  --accent: #f5c542; --accent-soft: #3a3115; --accent-ink: #f5d77a;
+  --alta: #f08a5d; --media: #e2b54d; --bassa: #9c998a; --ok: #6cc58f;
+  --seq-p: #ece9dc; --seq-c: #f5c542; --seq-a: #5c594d; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #14130f; --surface: #1d1c17; --ink: #f2f0e6; --muted: #a9a591; --line: #33312a;
+  --accent: #f5c542; --accent-soft: #3a3115; --accent-ink: #f5d77a;
+  --alta: #f08a5d; --media: #e2b54d; --bassa: #9c998a; --ok: #6cc58f;
+  --seq-p: #ece9dc; --seq-c: #f5c542; --seq-a: #5c594d; color-scheme: dark; }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 28px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 28px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.6rem, 3.2vw, 2.2rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; }
+.eyebrow { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+.num { font-variant-numeric: tabular-nums; }
+.url { font-family: var(--font-data); font-size: .8rem; word-break: break-all; }
+a { color: inherit; }
+a.url { text-decoration-color: var(--line); text-underline-offset: 2px; }
+a.url:hover { text-decoration-color: var(--accent); }
+button, select, input, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header { display: grid; gap: 10px; }
+header .site { display: flex; flex-wrap: wrap; gap: 6px 16px; color: var(--muted); font-size: .9rem; }
+.takeaway { font-size: 1.05rem; max-width: 72ch; margin: 0; }
+.takeaway b { font-weight: 700; }
+
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr)); gap: 12px; }
+.kpi { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; display: grid; gap: 4px; align-content: start; }
+.kpi .val { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.kpi .sub { font-size: .8rem; color: var(--muted); }
+.kpi .fonte { font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+.kpi.attesa .val { color: var(--muted); font-size: 1.1rem; font-weight: 700; padding-block: 6px; }
+.delta-giu { color: var(--alta); font-weight: 700; }
+.delta-su { color: var(--ok); font-weight: 700; }
+
+.tabs { display: flex; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--line); }
+.tab { border: 0; background: none; padding: 10px 14px; font-weight: 700; font-size: .92rem; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -1px; }
+.tab[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+.tab .n { font-variant-numeric: tabular-nums; font-weight: 600; opacity: .7; margin-left: 4px; }
+
+section { display: grid; gap: 14px; min-width: 0; }
+.sec-head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 10px 20px; }
+.sec-head p { margin: 4px 0 0; color: var(--muted); max-width: 74ch; font-size: .92rem; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 12px; font-size: .84rem; font-weight: 600; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip .n { font-variant-numeric: tabular-nums; opacity: .7; margin-left: 4px; }
+select, input[type="search"] { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 10px; font-size: .88rem; }
+input[type="search"] { min-width: 0; width: min(260px, 100%); }
+
+.azioni { display: grid; gap: 10px; }
+.azione { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); display: grid;
+  grid-template-columns: 6px minmax(0, 1fr) minmax(0, 250px); overflow: hidden; }
+.azione .stripe { background: var(--bassa); }
+.azione[data-priorita="alta"] .stripe { background: var(--alta); }
+.azione[data-priorita="media"] .stripe { background: var(--media); }
+.azione[data-stato="fatta"], .azione[data-stato="scartata"] { opacity: .62; }
+.azione.evidenzia { box-shadow: 0 0 0 2px var(--accent); }
+.az-body { padding: 14px 18px; display: grid; gap: 8px; min-width: 0; }
+.az-top { display: flex; gap: 12px; align-items: baseline; }
+.rank { font-family: var(--font-data); font-size: .8rem; color: var(--muted); flex: none; }
+.az-title { font-size: 1.02rem; font-weight: 700; overflow-wrap: anywhere; }
+.az-meta { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: .82rem; color: var(--muted); align-items: center; }
+.pill { font-size: .7rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.pill.alta { color: var(--alta); } .pill.media { color: var(--media); } .pill.bassa { color: var(--bassa); }
+.pill.neutra { color: var(--muted); }
+.pill.fonte { color: var(--accent-ink); background: var(--accent-soft); border-color: transparent; }
+.az-rimedio { margin: 0; font-size: .92rem; max-width: 80ch; }
+details { font-size: .88rem; }
+details summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+details ul { margin: 8px 0 0; padding-left: 18px; display: grid; gap: 4px; }
+details .q { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.collegate { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; font-size: .82rem; color: var(--muted); }
+.link-az { border: 1px dashed var(--line); background: none; border-radius: 6px; padding: 2px 8px; font-size: .8rem; cursor: pointer; text-align: left; }
+.link-az:hover { border-color: var(--ink); }
+.az-side { border-left: 1px solid var(--line); padding: 14px 16px; display: grid; gap: 8px; align-content: start; background: var(--accent-soft); }
+.az-side label { font-size: .72rem; font-weight: 700; color: var(--muted); letter-spacing: .05em; text-transform: uppercase; }
+.az-side select, .az-side textarea { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 6px 8px; font-size: .88rem; }
+.az-side textarea { resize: vertical; min-height: 60px; }
+.salvato { font-size: .75rem; color: var(--muted); min-height: 1.1em; }
+.altre { justify-self: start; }
+.btn { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; padding: 7px 14px; font-weight: 600; cursor: pointer; font-size: .88rem; }
+.btn:hover { border-color: var(--ink); }
+.avviso { background: var(--accent-soft); color: var(--accent-ink); border-radius: 8px; padding: 8px 12px; font-size: .86rem; }
+
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); min-width: 0; }
+.card.pad { padding: 18px 20px; display: grid; gap: 10px; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: .86rem; }
+th, td { text-align: left; padding: 9px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: .72rem; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); font-weight: 700; white-space: nowrap; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+tbody tr:last-child td { border-bottom: 0; }
+.coppia { display: grid; gap: 6px; min-width: 220px; }
+.quota { font-family: var(--font-data); font-size: .74rem; color: var(--muted); }
+.seq { display: flex; gap: 2px; }
+.seq i { width: 9px; height: 18px; border-radius: 2px; border: 1px solid var(--line); box-sizing: border-box; flex: none; }
+.seq i.P, .legenda i.P { background: var(--seq-p); border-color: var(--seq-p); }
+.seq i.C, .legenda i.C { background: var(--seq-c); border-color: var(--seq-c); }
+.seq i.A, .legenda i.A { background: var(--seq-a); border-color: var(--seq-a); }
+.legenda { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .8rem; color: var(--muted); align-items: center; }
+.legenda span { display: inline-flex; gap: 6px; align-items: center; }
+.legenda i { display: inline-block; width: 9px; height: 14px; border-radius: 2px; border: 1px solid var(--line); box-sizing: border-box; }
+.aio { font-size: .68rem; font-weight: 700; padding: 1px 6px; border-radius: 4px; background: var(--accent-soft); color: var(--accent-ink); }
+.aeo-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 10px; }
+.aeo-kpi { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: grid; gap: 2px; }
+.aeo-kpi .val { font-size: 1.4rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.aeo-kpi .sub { font-size: .78rem; color: var(--muted); }
+.barra { height: 8px; border-radius: 4px; background: var(--line); overflow: hidden; min-width: 80px; }
+.barra i { display: block; height: 100%; background: var(--seq-p); border-radius: 4px; }
+.cliente { font-weight: 700; color: var(--ok); }
+.stato-hs { font-family: var(--font-data); font-size: .72rem; color: var(--muted); }
+.foot { font-size: .84rem; color: var(--muted); display: grid; gap: 6px; max-width: 90ch; }
+.foot p { margin: 0; }
+@media (max-width: 760px) {
+  .azione { grid-template-columns: 6px minmax(0, 1fr); }
+  .az-side { grid-column: 2; border-left: 0; border-top: 1px solid var(--line); }
+}
+@media (prefers-reduced-motion: no-preference) { .azione { transition: opacity .2s ease, box-shadow .3s ease; } }
+</style>
+
+<div class="wrap">
+  <header id="inizio">
+    <div class="eyebrow" id="fonti-testa">Search Console · HubSpot AEO</div>
+    <h1>{{TITOLO}}</h1>
+    <div class="site" id="site"></div>
+    <p class="takeaway" id="takeaway">Caricamento dei dati delle ultime estrazioni…</p>
+  </header>
+
+  <div class="kpis" id="kpis" aria-live="polite"></div>
+
+  <div>
+    <div class="tabs" role="tablist" aria-label="Sezioni" id="tabs"></div>
+  </div>
+
+  <section id="piano" data-scheda>
+    <div class="sec-head">
+      <div>
+        <h2>Piano di lavoro</h2>
+        <p>Tutte le azioni in un elenco, in ordine di priorità. La priorità si calcola dentro ogni categoria, dal traffico in gioco. Decisione e nota si salvano qui e le leggono le skill di contenuto.</p>
+      </div>
+    </div>
+    <div class="controls" role="group" aria-label="Filtra per categoria" id="filtri-categoria"></div>
+    <div class="controls" role="group" aria-label="Filtra per stato" id="filtri-stato"></div>
+    <div class="avviso" id="avviso-db" hidden></div>
+    <div class="azioni" id="lista-azioni"></div>
+    <button class="btn altre" id="altre-azioni" type="button" hidden></button>
+  </section>
+
+  <section id="cannibalizzazioni" data-scheda hidden>
+    <div class="sec-head">
+      <div>
+        <h2>Cannibalizzazioni</h2>
+        <p>Query su cui una seconda pagina prende almeno il 20% dei click, o delle impressioni se i click sono pochi. La striscia mostra quale pagina Google ha scelto mese per mese. Fonte: Search Console.</p>
+      </div>
+      <div class="controls">
+        <input type="search" id="cerca" placeholder="Cerca query o pagina" aria-label="Cerca query o pagina">
+        <select id="filtro-tipo" aria-label="Tipo di caso">
+          <option value="non-brand">Esclusi i casi di brand</option>
+          <option value="stessa-lingua">Stessa lingua</option>
+          <option value="lingue">Lingue diverse</option>
+          <option value="brand">Solo brand</option>
+          <option value="tutti">Tutti</option>
+        </select>
+        <select id="ordina" aria-label="Ordina">
+          <option value="punteggio">Per peso</option>
+          <option value="impressioni">Per impressioni</option>
+          <option value="cambi">Per cambi di pagina</option>
+        </select>
+      </div>
+    </div>
+    <div class="legenda">
+      <span><i class="P"></i>pagina principale</span>
+      <span><i class="C"></i>pagina concorrente</span>
+      <span><i class="A"></i>un'altra pagina</span>
+      <span><i></i>nessun dato</span>
+      <span id="legenda-mesi"></span>
+    </div>
+    <div class="card"><div class="scroll">
+      <table>
+        <thead><tr><th>Query</th><th class="n">Impressioni</th><th>Pagine in concorrenza</th><th>Mese per mese</th><th class="n">Cambi</th></tr></thead>
+        <tbody id="tabella-casi"></tbody>
+      </table>
+    </div></div>
+    <button class="btn altre" id="altri-casi" type="button" hidden></button>
+    <h3>Pagine più coinvolte</h3>
+    <div class="card"><div class="scroll">
+      <table>
+        <thead><tr><th>Pagina</th><th class="n">Casi</th><th class="n">Da principale</th><th class="n">Impressioni contese</th></tr></thead>
+        <tbody id="tabella-pagine"></tbody>
+      </table>
+    </div></div>
+  </section>
+
+  <section id="opportunita" data-scheda hidden>
+    <div class="sec-head">
+      <div>
+        <h2>Opportunità sulle ricerche</h2>
+        <p id="opp-intro">Ricerche dove la pagina è tra la posizione 4 e la 20 e ha impressioni reali in Search Console. AI Overview indica che la ricerca mostra una risposta generata da Google.</p>
+      </div>
+    </div>
+    <div class="card"><div class="scroll">
+      <table>
+        <thead><tr><th>Ricerca</th><th>Mercato</th><th class="n">Posizione</th><th class="n">Volume</th><th class="n">Impressioni GSC</th><th>Pagina</th></tr></thead>
+        <tbody id="tabella-opportunita"></tbody>
+      </table>
+    </div></div>
+  </section>
+
+  <section id="site-audit" data-scheda hidden>
+    <div class="sec-head">
+      <div>
+        <h2>Site Audit</h2>
+        <p id="sa-intro">Problemi tecnici rilevati dal Site Audit, con le impressioni di Search Console delle pagine coinvolte dove le pagine sono state lette.</p>
+      </div>
+    </div>
+    <div class="card"><div class="scroll">
+      <table>
+        <thead><tr><th>Problema</th><th>Gravità</th><th class="n">Occorrenze</th><th class="n">Pagine lette</th><th class="n">Impressioni pagine</th><th>Azione</th></tr></thead>
+        <tbody id="tabella-audit"></tbody>
+      </table>
+    </div></div>
+  </section>
+
+  <section id="aeo" data-scheda hidden>
+    <div class="sec-head">
+      <div>
+        <h2>Visibilità negli assistenti AI</h2>
+        <p>Dati di HubSpot AEO: visibilità e menzioni per prompt e assistente, citazioni, share of voice rispetto ai competitor, raccomandazioni. Con un'estrazione Ahrefs, anche le pagine del sito che gli assistenti citano nelle risposte.</p>
+      </div>
+    </div>
+    <div id="aeo-contenuto" style="display:grid;gap:14px"></div>
+  </section>
+
+  <footer class="foot" id="metodo"></footer>
+</div>
+
+<script>
+(function () {
+  const STATI = [["da-decidere", "Da decidere"], ["approvata", "Approvata"], ["in-corso", "In corso"], ["fatta", "Fatta"], ["scartata", "Scartata"]];
+  const CHIUSI = ["fatta", "scartata"];
+  const CATEGORIE = { cannibalizzazione: "Cannibalizzazione", opportunita: "Opportunità", tecnico: "Tecnico", aeo: "AEO" };
+  const TIPI = { "stessa-lingua": "Stessa lingua", "lingue": "Lingue diverse", "brand": "Brand" };
+  const SCHEDE = [["piano", "Piano di lavoro"], ["cannibalizzazioni", "Cannibalizzazioni"], ["opportunita", "Opportunità"], ["site-audit", "Site Audit"], ["aeo", "AEO"]];
+  const fmt = new Intl.NumberFormat("it-IT");
+  const pct = (x) => Math.round(x * 100) + "%";
+  // HubSpot dà la visibilità come quota (0-1) o come percentuale (0-100): sotto 1 si legge come quota
+  const percento = (v) => v == null ? "—" : (v <= 1 ? Math.round(v * 100) : Math.round(v)) + "%";
+  const ASSISTENTI = { CHATGPT: "ChatGPT", GEMINI: "Gemini", CLAUDE: "Claude", PERPLEXITY: "Perplexity", GOOGLE_AI_MODE: "Google AI Mode", GOOGLE_AI_OVERVIEWS: "Google AI Overviews" };
+  const STATI_HS = { NEW: "nuova", IN_PROGRESS: "in corso", COMPLETED: "completata", DISMISSED: "scartata", ARCHIVED: "archiviata", FAILED: "non riuscita", DRAFT_CREATED: "bozza creata" };
+  const giorno = (s) => new Date(s + "T00:00:00").toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" });
+  const mese = (m) => new Date(m + "-01T00:00:00").toLocaleDateString("it-IT", { month: "short", year: "2-digit" });
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+
+  let D = null, decisioni = {}, db = null, puoScrivere = true, uid = null;
+  let filtroStato = "aperte", filtroCategoria = "tutte", mostraAzioni = 15, mostraCasi = 60, scheda = "piano";
+  const indiceAzioni = {};
+
+  const corto = (url) => url.replace(/^https?:\/\/[^/]+/, "") || "/";
+  function link(url) { const a = el("a", "url", corto(url)); a.href = url; a.target = "_blank"; a.rel = "noopener"; return a; }
+  const stato = (id) => (decisioni[id] && decisioni[id].stato) || "da-decidere";
+
+  // --- Schede ---
+  function apriScheda(nome, conLink) {
+    scheda = SCHEDE.some(([k]) => k === nome) ? nome : "piano";
+    document.querySelectorAll("[data-scheda]").forEach((s) => { s.hidden = s.id !== scheda; });
+    document.querySelectorAll(".tab").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.scheda === scheda)));
+    if (conLink && history.replaceState) { try { history.replaceState(null, "", "#" + scheda); } catch (e) {} }
+  }
+  function renderTabs() {
+    const conta = { piano: D.azioni.filter((a) => !CHIUSI.includes(stato(a.id))).length,
+      cannibalizzazioni: D.conteggi["stessa-lingua"] + D.conteggi.lingue,
+      opportunita: D.azioni.filter((a) => a.categoria === "opportunita").reduce((s, a) => s + a.keyword.length, 0),
+      "site-audit": D.azioni.filter((a) => a.categoria === "tecnico").length,
+      aeo: D.hubspot && D.hubspot.stato === "presente" ? (D.hubspot.prompt || []).length : null };
+    $("tabs").replaceChildren(...SCHEDE.map(([k, nome]) => {
+      const b = el("button", "tab", nome); b.type = "button"; b.setAttribute("role", "tab"); b.dataset.scheda = k; b.id = "tab-" + k;
+      if (conta[k] != null) b.append(el("span", "n", fmt.format(conta[k])));
+      b.setAttribute("aria-selected", String(k === scheda));
+      b.addEventListener("click", () => apriScheda(k, true));
+      return b;
+    }));
+  }
+
+  // --- Intestazione e numeri chiave ---
+  const STRUM = () => (D.ricerche && D.ricerche.strumento) || "Semrush";
+  const GA = () => D.ga4 && D.ga4.stato === "presente";
+  const chiave = (url) => (url || "").replace(/^https?:\/\/(www\.)?/i, "").toLowerCase().split("?")[0].split("#")[0].replace(/\/$/, "");
+  function renderHeader() {
+    const parti = [el("span", null, D.sito), el("span", null, "Search Console dal " + giorno(D.periodo.inizio) + " al " + giorno(D.periodo.fine))];
+    if (D.ricerche) parti.push(el("span", null, STRUM() + " del " + giorno(D.ricerche.estrazione)));
+    if (GA()) parti.push(el("span", null, "GA4 dal " + giorno(D.ga4.periodo.inizio) + " al " + giorno(D.ga4.periodo.fine)));
+    $("fonti-testa").textContent = ["Search Console", D.ricerche ? STRUM() : null, "HubSpot AEO", GA() ? "GA4" : null].filter(Boolean).join(" · ");
+    parti.push(el("span", null, "Prossimo aggiornamento entro il " + giorno(D.prossima)));
+    $("site").replaceChildren(...parti);
+    const t = $("takeaway"); t.replaceChildren();
+    const aperte = D.azioni.filter((a) => !CHIUSI.includes(stato(a.id)));
+    if (!aperte.length) { t.textContent = "Tutte le azioni sono chiuse. Le prossime arrivano con il prossimo aggiornamento."; return; }
+    const alte = aperte.filter((a) => a.priorita === "alta").length;
+    t.append(el("b", null, fmt.format(alte) + (alte === 1 ? " azione" : " azioni") + " ad alta priorità"),
+      " su " + fmt.format(aperte.length) + " aperte. La prima: ", el("b", null, aperte[0].titolo), ".");
+  }
+
+  function kpi(fonte, label, val, sub, attesa) {
+    const k = el("div", "kpi" + (attesa ? " attesa" : ""));
+    k.append(el("div", "fonte", fonte), el("div", "eyebrow", label), el("div", "val", val));
+    if (sub) { const s = el("div", "sub"); s.append(...[].concat(sub)); k.append(s); }
+    return k;
+  }
+  function delta(ora, prima, periodo) {
+    if (!prima) return "";
+    const v = (ora - prima) / prima;
+    const testo = (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v * 100).toLocaleString("it-IT", { maximumFractionDigits: 1 }) + "%";
+    return [el("span", v < 0 ? "delta-giu" : "delta-su", testo), " " + periodo];
+  }
+  function renderKpi() {
+    const y = D.yoy, c = D.conteggi;
+    const per = y ? mese(y.mesi[0]) + "–" + mese(y.mesi[y.mesi.length - 1]) + " sull'anno prima" : "";
+    const opp = D.azioni.filter((a) => a.categoria === "opportunita");
+    const ricerche = opp.reduce((s, a) => s + a.keyword.length, 0);
+    const R = D.ricerche, sa = R && R.site_audit, S = STRUM();
+    const box = [
+      kpi("Search Console", y ? "Click, ultimi 3 mesi" : "Click nel periodo", fmt.format(y ? y.click : D.totali.click), y ? delta(y.click, y.click_prima, per) : null),
+      kpi("Search Console", "Casi di cannibalizzazione", fmt.format(c["stessa-lingua"] + c.lingue),
+        fmt.format(c["stessa-lingua"]) + " nella stessa lingua, " + fmt.format(c.lingue) + " tra lingue diverse"),
+    ];
+    box.push(R ? kpi(S + " + Search Console", "Opportunità confermate", fmt.format(ricerche), "ricerche in posizione 4-20 su " + fmt.format(opp.length) + " pagine")
+      : kpi("Semrush o Ahrefs", "Opportunità", "In attesa", "Nessuna estrazione dello strumento di ricerca", true));
+    box.push(sa ? kpi(S + " Site Audit", "Errori tecnici", fmt.format(sa.errors), fmt.format(sa.warnings) + " avvisi" + (sa.pages_crawled ? " su " + fmt.format(sa.pages_crawled) + " pagine scansionate" : ""))
+      : kpi("Site Audit", "Errori tecnici", "In attesa", "Nessun Site Audit letto", true));
+    const h = D.hubspot || {};
+    if (h.stato === "presente" && h.riepilogo) {
+      const r = h.riepilogo;
+      box.push(kpi("HubSpot AEO", "Visibilità negli assistenti AI", percento(r.averageVisibility),
+        "Menzionata in " + fmt.format(r.totalRunsWithMentions || 0) + " risposte su " + fmt.format(r.totalResponses || 0) + " · " + fmt.format(r.totalPrompts || 0) + " prompt"));
+    } else if (R && R.ai) {
+      box.push(kpi(S, "Citazioni negli assistenti AI", fmt.format(R.ai.citazioni),
+        fmt.format(R.ai.pagine) + " pagine del sito citate · visibilità per prompt in attesa di HubSpot"));
+    } else {
+      box.push(kpi("HubSpot AEO", "Visibilità negli assistenti AI", "In attesa dei primi dati", "Arriva con il primo download HubSpot", true));
+    }
+    if (GA()) {
+      const g = D.ga4.recenti;
+      box.push(kpi("GA4", "Visite dagli assistenti AI, ultimi 3 mesi", fmt.format(g.ai),
+        [].concat(delta(g.ai, g.ai_prima, "sui tre mesi prima") || [], g.organica ? [" · " + (g.ai / g.organica * 100).toLocaleString("it-IT", { maximumFractionDigits: 1 }) + "% della ricerca organica"] : [])));
+    } else {
+      box.push(kpi("GA4", "Visite dagli assistenti AI", "In attesa", "Collega GA4 con la skill ie-aeo-ga4", true));
+    }
+    $("kpis").replaceChildren(...box);
+  }
+
+  // --- Piano di lavoro ---
+  function filtrate() {
+    return D.azioni.filter((a) => {
+      if (filtroCategoria !== "tutte" && a.categoria !== filtroCategoria) return false;
+      const s = stato(a.id);
+      if (filtroStato === "tutte") return true;
+      if (filtroStato === "aperte") return !CHIUSI.includes(s);
+      return s === filtroStato;
+    });
+  }
+  function renderFiltri() {
+    const cat = { tutte: D.azioni.length };
+    D.azioni.forEach((a) => { cat[a.categoria] = (cat[a.categoria] || 0) + 1; });
+    const vociCat = [["tutte", "Tutte le categorie"], ...Object.entries(CATEGORIE).filter(([k]) => cat[k])];
+    $("filtri-categoria").replaceChildren(...vociCat.map(([k, nome]) => chip("cat-" + k, nome, cat[k], filtroCategoria === k, () => { filtroCategoria = k; mostraAzioni = 15; renderPiano(true); renderFiltri(); })));
+    const st = { aperte: 0, tutte: 0 }; STATI.forEach(([k]) => (st[k] = 0));
+    D.azioni.filter((a) => filtroCategoria === "tutte" || a.categoria === filtroCategoria).forEach((a) => {
+      const s = stato(a.id); st[s]++; st.tutte++; if (!CHIUSI.includes(s)) st.aperte++;
+    });
+    const vociSt = [["aperte", "Aperte"], ...STATI, ["tutte", "Tutte"]];
+    $("filtri-stato").replaceChildren(...vociSt.map(([k, nome]) => chip("stato-" + k, nome, st[k], filtroStato === k, () => { filtroStato = k; mostraAzioni = 15; renderPiano(true); renderFiltri(); })));
+  }
+  function chip(id, nome, n, attivo, fn) {
+    const b = el("button", "chip", nome); b.type = "button"; b.id = id;
+    b.setAttribute("aria-pressed", String(attivo)); b.append(el("span", "n", fmt.format(n || 0)));
+    b.addEventListener("click", fn); return b;
+  }
+
+  function avvisoDb(testo) { const a = $("avviso-db"); a.textContent = testo; a.hidden = false; }
+
+  async function salva(id, campi, esito) {
+    if (!db) return;
+    const prima = decisioni[id] || {};
+    const corpo = { stato: prima.stato || "da-decidere", nota: prima.nota || "", ...campi,
+      aggiornato_il: new Date().toISOString(), aggiornato_da: uid, estrazione: D.estrazione };
+    esito.textContent = "Salvataggio…";
+    try { await db.collection("decisioni").doc(id).set(corpo); esito.textContent = "Salvato"; }
+    catch (e) {
+      if (e && e.code === "invalid_argument") { puoScrivere = false; avvisoDb("Non hai i permessi per modificare le decisioni: puoi solo consultarle."); renderPiano(true); }
+      else esito.textContent = e && e.code === "unavailable" ? "Non salvato: riprova tra poco." : "Non salvato.";
+    }
+  }
+
+  function vaiAdAzione(id) {
+    filtroCategoria = "tutte"; filtroStato = "tutte"; mostraAzioni = 1e6;
+    apriScheda("piano", true); renderFiltri(); renderPiano(true);
+    const c = $("azione-" + id);
+    if (c) { c.scrollIntoView({ block: "center" }); c.classList.add("evidenzia"); setTimeout(() => c.classList.remove("evidenzia"), 2200); }
+  }
+
+  function metaAzione(a) {
+    const m = el("div", "az-meta");
+    m.append(el("span", "pill " + a.priorita, a.priorita), el("span", "pill neutra", CATEGORIE[a.categoria] || a.categoria));
+    a.fonti.forEach((f) => m.append(el("span", "pill fonte", f)));
+    if (a.categoria === "cannibalizzazione") {
+      m.append(el("span", "num", TIPI[a.tipo] + " · " + fmt.format(a.casi.length) + " query · " + fmt.format(a.impressioni) + " impressioni contese"));
+    } else if (a.categoria === "opportunita") {
+      m.append(el("span", "num", fmt.format(a.keyword.length) + " ricerche · " + fmt.format(a.impressioni) + " impressioni in Search Console"));
+    } else if (a.categoria === "aeo" && a.hubspot.length) {
+      const r = a.hubspot[0];
+      m.append(el("span", "num", "priorità HubSpot " + r.priorita + " · stato in HubSpot: " + (STATI_HS[r.stato] || r.stato) + (r.citazioni ? " · " + fmt.format(r.citazioni) + " citazioni coinvolte" : "")));
+    } else if (a.categoria === "tecnico" && a.problema) {
+      m.append(el("span", "num", a.problema.gravita + " · " + fmt.format(a.problema.occorrenze) + " occorrenze" + (a.impressioni ? " · " + fmt.format(a.impressioni) + " impressioni sulle pagine lette" : "")));
+    }
+    if (a.visite_ai) m.append(el("span", "num", fmt.format(a.visite_ai) + " visite dagli assistenti AI sulle pagine (GA4): da proteggere"));
+    m.append(el("span", null, "Come: " + a.skill));
+    return m;
+  }
+
+  function dettagli(a) {
+    const out = [];
+    if (a.pagine.length) {
+      const d = el("details"); d.append(el("summary", null, "Pagine coinvolte (" + a.pagine.length + ")"));
+      const ul = el("ul"); a.pagine.slice(0, 40).forEach((p) => { const li = el("li"); li.append(link(D.pagine[p])); ul.append(li); });
+      if (a.pagine.length > 40) ul.append(el("li", "muted", "…e altre " + (a.pagine.length - 40)));
+      d.append(ul); out.push(d);
+    }
+    if (a.casi.length) {
+      const d = el("details"); d.append(el("summary", null, "Query (" + a.casi.length + ")"));
+      const ul = el("ul");
+      a.casi.slice(0, 25).forEach((ci) => { const c = D.casi[ci]; const li = el("li", "q"); li.append(el("span", null, c.query), el("span", "quota", fmt.format(c.impressioni) + " impr. · " + c.cambi + " cambi")); ul.append(li); });
+      if (a.casi.length > 25) ul.append(el("li", "muted", "…e altre " + (a.casi.length - 25) + " nella scheda Cannibalizzazioni"));
+      d.append(ul); out.push(d);
+    }
+    if (a.keyword.length) {
+      const d = el("details"); d.append(el("summary", null, "Ricerche (" + a.keyword.length + ")"));
+      const ul = el("ul");
+      a.keyword.forEach((k) => { const li = el("li", "q"); li.append(el("span", null, k.keyword), el("span", "quota", k.database + " · pos. " + k.posizione + " · vol. " + fmt.format(k.volume) + " · " + fmt.format(k.gsc_impressioni) + " impr.")); if (k.aio) li.append(el("span", "aio", "AI Overview")); ul.append(li); });
+      d.append(ul); out.push(d);
+    }
+    if (a.hubspot.length) {
+      const d = el("details");
+      d.append(el("summary", null, a.categoria === "aeo" ? "Raccomandazione originale di HubSpot" : "Raccomandazioni HubSpot AEO collegate (" + a.hubspot.length + ")"));
+      const ul = el("ul");
+      a.hubspot.forEach((r) => { const li = el("li", "q"); li.append(el("span", null, r.titolo), el("span", "stato-hs", "priorità " + r.priorita + " · " + (STATI_HS[r.stato] || r.stato))); ul.append(li); });
+      if (D.hubspot && D.hubspot.link) { const li = el("li"); const l = el("a", "url", "Apri HubSpot AEO"); l.href = D.hubspot.link; l.target = "_blank"; l.rel = "noopener"; li.append(l, el("span", "muted", " · lo stato si aggiorna lì")); ul.append(li); }
+      d.append(ul); out.push(d);
+    }
+    if (a.collegate.length) {
+      const c = el("div", "collegate"); c.append(el("span", null, "Collegate:"));
+      a.collegate.forEach((id) => { const b = indiceAzioni[id]; if (!b) return; const x = el("button", "link-az", b.titolo); x.type = "button"; x.addEventListener("click", () => vaiAdAzione(id)); c.append(x); });
+      out.push(c);
+    }
+    return out;
+  }
+
+  function azioneCard(a) {
+    const card = el("article", "azione"); card.id = "azione-" + a.id;
+    card.dataset.priorita = a.priorita; card.dataset.stato = stato(a.id);
+    const body = el("div", "az-body"); const top = el("div", "az-top");
+    top.append(el("span", "rank", String(D.azioni.indexOf(a) + 1).padStart(2, "0")), el("h3", "az-title", a.titolo));
+    body.append(top, metaAzione(a), el("p", "az-rimedio", a.rimedio), ...dettagli(a));
+
+    const side = el("div", "az-side"); const d = decisioni[a.id] || {};
+    const lab = el("label", null, "Decisione"); lab.htmlFor = "decisione-" + a.id;
+    const sel = el("select"); sel.id = "decisione-" + a.id; STATI.forEach(([k, nome]) => sel.append(new Option(nome, k))); sel.value = stato(a.id);
+    const labN = el("label", null, "Nota"); labN.htmlFor = "nota-" + a.id;
+    const ta = el("textarea"); ta.id = "nota-" + a.id; ta.placeholder = "Chi se ne occupa, entro quando"; ta.value = d.nota || "";
+    const esito = el("div", "salvato");
+    if (d.aggiornato_il) esito.textContent = "Aggiornata il " + new Date(d.aggiornato_il).toLocaleDateString("it-IT");
+    const off = !db || !puoScrivere; sel.disabled = off; ta.disabled = off;
+    sel.addEventListener("change", () => salva(a.id, { stato: sel.value }, esito));
+    ta.addEventListener("change", () => salva(a.id, { nota: ta.value.trim() }, esito));
+    side.append(lab, sel, labN, ta, esito);
+    card.append(el("div", "stripe"), body, side);
+    return card;
+  }
+
+  function renderPiano(forza) {
+    const box = $("lista-azioni");
+    if (!forza && box.contains(document.activeElement) && document.activeElement.tagName === "TEXTAREA") return;
+    const lista = filtrate();
+    box.replaceChildren(...lista.slice(0, mostraAzioni).map(azioneCard));
+    if (!lista.length) box.append(el("p", "muted", "Nessuna azione con questi filtri."));
+    const btn = $("altre-azioni"); btn.hidden = lista.length <= mostraAzioni;
+    btn.textContent = "Mostra tutte le " + fmt.format(lista.length) + " azioni";
+  }
+
+  // --- Cannibalizzazioni ---
+  const NOMI = { P: "pagina principale", C: "pagina concorrente", A: "un'altra pagina", ".": "nessun dato" };
+  function casiFiltrati() {
+    const tipo = $("filtro-tipo").value, q = $("cerca").value.trim().toLowerCase(), ord = $("ordina").value;
+    let l = D.casi.filter((c) => tipo === "tutti" || (tipo === "non-brand" ? c.tipo !== "brand" : c.tipo === tipo));
+    if (q) l = l.filter((c) => c.query.includes(q) || D.pagine[c.p].toLowerCase().includes(q) || D.pagine[c.c].toLowerCase().includes(q));
+    const peso = { punteggio: (c) => c.punteggio, impressioni: (c) => c.impressioni, cambi: (c) => c.cambi * 1e9 + c.impressioni }[ord];
+    return l.slice().sort((x, y) => peso(y) - peso(x));
+  }
+  function renderCasi() {
+    const l = casiFiltrati();
+    const righe = l.slice(0, mostraCasi).map((c) => {
+      const tr = el("tr"); const tq = el("td");
+      tq.append(el("div", null, c.query), el("div", "quota", TIPI[c.tipo] + (c.domanda ? " · domanda" : "")));
+      const tp = el("td"); const cp = el("div", "coppia");
+      const r1 = el("div"); r1.append(link(D.pagine[c.p]), el("div", "quota", "principale · " + pct(c.qp) + " · pos. " + c.posp.toLocaleString("it-IT")));
+      const r2 = el("div"); r2.append(link(D.pagine[c.c]), el("div", "quota", "concorrente · " + pct(c.qc) + " · pos. " + c.posc.toLocaleString("it-IT")));
+      cp.append(r1, r2); tp.append(cp);
+      const ts = el("td"); const s = el("div", "seq"); s.setAttribute("role", "img");
+      s.setAttribute("aria-label", "Pagina scelta mese per mese: " + [...c.seq].map((x, i) => mese(D.mesi[i]) + ", " + NOMI[x]).join("; "));
+      [...c.seq].forEach((x, i) => { const b = el("i", x === "." ? "" : x); b.title = mese(D.mesi[i]) + ": " + NOMI[x]; s.append(b); });
+      ts.append(s);
+      tr.append(tq, el("td", "n", fmt.format(c.impressioni)), tp, ts, el("td", "n", String(c.cambi)));
+      return tr;
+    });
+    const tb = $("tabella-casi"); tb.replaceChildren(...righe);
+    if (!l.length) { const tr = el("tr"); const td = el("td", "muted", "Nessun caso con questi filtri."); td.colSpan = 5; tr.append(td); tb.append(tr); }
+    const btn = $("altri-casi"); btn.hidden = l.length <= mostraCasi;
+    btn.textContent = "Mostra altri " + fmt.format(Math.min(100, l.length - mostraCasi)) + " casi su " + fmt.format(l.length);
+  }
+  function renderPagine() {
+    $("tabella-pagine").replaceChildren(...D.pagine_coinvolte.map((p) => {
+      const tr = el("tr"); const td = el("td"); td.append(link(D.pagine[p.pagina]));
+      tr.append(td, el("td", "n", fmt.format(p.casi)), el("td", "n", fmt.format(p.come_principale)), el("td", "n", fmt.format(p.impressioni)));
+      return tr;
+    }));
+  }
+
+  // --- Opportunità ---
+  function renderOpportunita() {
+    const righe = [];
+    D.azioni.filter((a) => a.categoria === "opportunita").forEach((a) => a.keyword.forEach((k) => righe.push({ k, a })));
+    righe.sort((x, y) => y.k.gsc_impressioni - x.k.gsc_impressioni);
+    const tb = $("tabella-opportunita");
+    $("opp-intro").textContent = "Ricerche dove la pagina è tra la posizione 4 e la 20 secondo " + STRUM() + " e ha impressioni reali in Search Console. AI Overview indica che la ricerca mostra una risposta generata da Google.";
+    if (!righe.length) { const tr = el("tr"); const td = el("td", "muted", D.ricerche ? "Nessuna opportunità confermata da Search Console." : "In attesa della prima estrazione di Semrush o Ahrefs."); td.colSpan = 6; tr.append(td); tb.replaceChildren(tr); return; }
+    tb.replaceChildren(...righe.map(({ k, a }) => {
+      const tr = el("tr"); const tq = el("td"); tq.append(el("div", null, k.keyword)); if (k.aio) tq.append(el("span", "aio", "AI Overview"));
+      const tp = el("td"); tp.append(link(D.pagine[a.pagine[0]]));
+      tr.append(tq, el("td", null, k.database), el("td", "n", String(k.posizione)), el("td", "n", fmt.format(k.volume)), el("td", "n", fmt.format(k.gsc_impressioni)), tp);
+      return tr;
+    }));
+  }
+
+  // --- Site Audit ---
+  function renderAudit() {
+    const sa = D.ricerche && D.ricerche.site_audit;
+    const tb = $("tabella-audit");
+    if (!sa) { const tr = el("tr"); const td = el("td", "muted", "In attesa del primo Site Audit."); td.colSpan = 6; tr.append(td); tb.replaceChildren(tr); return; }
+    const quando = sa.last_audit ? new Date(sa.last_audit) : null;
+    $("sa-intro").textContent = "Site Audit di " + STRUM() + (quando && !isNaN(quando) ? ", scansione del " + quando.toLocaleDateString("it-IT") : "") + ": "
+      + fmt.format(sa.errors) + " errori, " + fmt.format(sa.warnings) + " avvisi, " + fmt.format(sa.notices) + " note"
+      + (sa.pages_crawled ? " su " + fmt.format(sa.pages_crawled) + " pagine" + (sa.pages_limit ? " (limite " + fmt.format(sa.pages_limit) + ")" : "") : "")
+      + ". Le impressioni sono quelle di Search Console delle pagine lette.";
+    const ordine = { errore: 0, avviso: 1, nota: 2 };
+    const l = D.azioni.filter((a) => a.categoria === "tecnico").sort((x, y) => (ordine[x.problema.gravita] - ordine[y.problema.gravita]) || (y.impressioni - x.impressioni) || (y.problema.occorrenze - x.problema.occorrenze));
+    tb.replaceChildren(...l.map((a) => {
+      const tr = el("tr"); const b = el("button", "link-az", "Vai all'azione"); b.type = "button"; b.addEventListener("click", () => vaiAdAzione(a.id));
+      const tdb = el("td"); tdb.append(b);
+      tr.append(el("td", null, a.titolo), el("td", null, a.problema.gravita), el("td", "n", fmt.format(a.problema.occorrenze)), el("td", "n", a.problema.pagine_lette ? fmt.format(a.problema.pagine_lette) : "—"), el("td", "n", a.impressioni ? fmt.format(a.impressioni) : "—"), tdb);
+      return tr;
+    }));
+  }
+
+  // --- AEO ---
+  function tabella(intestazioni, righe, vuoto) {
+    const card = el("div", "card"); const sc = el("div", "scroll"); const t = el("table");
+    const th = el("thead"); const tr = el("tr");
+    intestazioni.forEach(([testo, n]) => tr.append(el("th", n ? "n" : null, testo))); th.append(tr);
+    const tb = el("tbody");
+    righe.forEach((celle) => { const r = el("tr"); celle.forEach((c) => { if (c instanceof Node) r.append(c); else { const [v, n] = Array.isArray(c) ? c : [c, false]; r.append(el("td", n ? "n" : null, v)); } }); tb.append(r); });
+    if (!righe.length) { const r = el("tr"); const td = el("td", "muted", vuoto); td.colSpan = intestazioni.length; r.append(td); tb.append(r); }
+    t.append(th, tb); sc.append(t); card.append(sc); return card;
+  }
+  function td(nodo) { const c = el("td"); c.append(nodo); return c; }
+  function barra(v, max) { const b = el("div", "barra"); const i = el("i"); i.style.width = (max ? Math.round(100 * v / max) : 0) + "%"; b.append(i); return b; }
+
+  function bloccoAi() {
+    const R = D.ricerche; if (!R || !R.ai) return [];
+    const S = R.strumento || "Ahrefs";
+    const piccolo = (label, val, sub) => { const d = el("div", "aeo-kpi"); d.append(el("div", "eyebrow", label), el("div", "val", val)); if (sub) d.append(el("div", "sub", sub)); return d; };
+    const k = el("div", "aeo-kpis");
+    k.append(piccolo("Citazioni totali", fmt.format(R.ai.citazioni)), piccolo("Pagine del sito citate", fmt.format(R.ai.pagine)));
+    const maxc = Math.max(1, ...R.ai.assistenti.map((x) => x.citazioni));
+    return [
+      el("h3", null, "Citazioni negli assistenti AI, da " + S),
+      el("p", "muted", S + " conta quante volte gli assistenti citano una pagina di questo sito nelle risposte che osserva. Dice quali pagine gli assistenti usano come fonte: la visibilità del brand sui prompt del cliente resta quella di HubSpot AEO."),
+      k,
+      tabella([["Assistente"], ["Citazioni", true], [""], ["Pagine citate", true]],
+        R.ai.assistenti.map((x) => [x.assistente, [fmt.format(x.citazioni), true], td(barra(x.citazioni, maxc)), [fmt.format(x.pagine), true]]),
+        "Nessuna citazione rilevata."),
+      el("h3", null, "Pagine del sito citate dagli assistenti"),
+      tabella([["Pagina"], ["Risposte", true], ["Assistenti"], ["Impressioni GSC", true]],
+        (R.ai.url_citati || []).map((u) => { const a = el("a", "url cliente", u.url.replace(/^https?:\/\//, "")); a.href = u.url; a.target = "_blank"; a.rel = "noopener"; return [td(a), [fmt.format(u.risposte), true], u.assistenti.join(", "), [u.gsc_impressioni == null ? "—" : fmt.format(u.gsc_impressioni), true]]; }),
+        "Nessuna pagina citata."),
+    ];
+  }
+
+  function bloccoGa4() {
+    if (!GA()) return [el("h3", null, "Dalle risposte al sito: visite da GA4"),
+      el("p", "muted", "In attesa: le visite che arrivano al sito da ChatGPT, Perplexity, Gemini e dagli altri assistenti arrivano collegando Google Analytics 4 con la skill ie-aeo-ga4.")];
+    const g = D.ga4, r = g.recenti, h = D.hubspot || {};
+    const piccolo = (label, val, sub) => { const d = el("div", "aeo-kpi"); d.append(el("div", "eyebrow", label), el("div", "val", val)); if (sub) d.append(el("div", "sub", sub)); return d; };
+    const p1 = (x) => x == null ? "—" : (x * 100).toLocaleString("it-IT", { maximumFractionDigits: 1 }) + "%";
+    const k = el("div", "aeo-kpis");
+    k.append(
+      piccolo("Visite AI, " + r.mesi.map((m) => mese(m)).join("–").replace(/–.*–/, "–"), fmt.format(r.ai), r.ai_prima ? "tre mesi prima: " + fmt.format(r.ai_prima) : null),
+      piccolo("Quota sulla ricerca organica", r.organica ? p1(r.ai / r.organica) : "—", fmt.format(r.organica) + " sessioni organiche"),
+      piccolo("Sessioni coinvolte", p1(r.coinvolgimento_ai), "ricerca organica: " + p1(r.coinvolgimento_organica)),
+      piccolo("Nel periodo", fmt.format(g.totali.sessioni_ai), "su " + fmt.format(g.totali.sessioni) + " sessioni"));
+    const maxm = Math.max(1, ...g.mesi.map((m) => m.ai));
+    const hsAss = {}; (h.assistenti || []).forEach((x) => { hsAss[ASSISTENTI[x.assistant] || x.assistant] = x; });
+    const maxa = Math.max(1, ...g.assistenti.map((x) => x.sessioni));
+    const azioniPerPagina = {};
+    D.azioni.forEach((az) => az.pagine.forEach((i) => { const c = chiave(D.pagine[i]); if (!azioniPerPagina[c]) azioniPerPagina[c] = az; }));
+    const base = D.sito.replace(/\/$/, "");
+    return [
+      el("h3", null, "Dalle risposte al sito: visite da GA4"),
+      el("p", "muted", "Le visite che arrivano al sito da un assistente AI, con il link nella risposta. Sono un minimo: le app e alcuni browser non passano la sorgente, e AI Overviews e AI Mode di Google restano nella ricerca organica. Proprietà " + g.proprieta + (g.host ? ", host " + g.host.replace(/[\^$\\]/g, "") : "") + ", estrazione del " + giorno(g.estrazione) + "."),
+      k,
+      tabella([["Mese"], ["Visite AI", true], [""], ["Quota sul totale", true]],
+        g.mesi.map((m) => [mese(m.mese) + (m.parziale ? " (parziale)" : ""), [fmt.format(m.ai), true], td(barra(m.ai, maxm)), [m.tutte ? p1(m.ai / m.tutte) : "—", true]]), "Nessun dato."),
+      tabella([["Assistente"], ["Visite AI", true], [""], ["Coinvolte", true], ["Ultimi 3 mesi", true], ["Menzioni in HubSpot", true]],
+        g.assistenti.map((x) => { const hs = hsAss[x.nome]; return [x.nome, [fmt.format(x.sessioni), true], td(barra(x.sessioni, maxa)), [p1(x.sessioni ? x.coinvolte / x.sessioni : null), true], [fmt.format(x.recenti), true], [hs ? fmt.format(hs.runsWithMentions || 0) + " / " + fmt.format(hs.totalRuns || 0) : "—", true]]; }), "Nessun assistente."),
+      el("h3", null, "Pagine di arrivo dagli assistenti AI"),
+      tabella([["Pagina"], ["Visite AI", true], ["Assistente"], ["Citazioni HubSpot", true], ["Impressioni GSC", true], ["Azione aperta"]],
+        g.pagine.map((x) => {
+          const path = x.pagina.indexOf("/") >= 0 ? x.pagina.slice(x.pagina.indexOf("/")) : "/";
+          const a = el("a", "url cliente", path); a.href = base + path; a.target = "_blank"; a.rel = "noopener";
+          const az = azioniPerPagina[x.pagina]; let cella = "—";
+          if (az) { const b = el("button", "link-az", az.titolo); b.type = "button"; b.addEventListener("click", () => vaiAdAzione(az.id)); cella = td(b); }
+          return [td(a), [fmt.format(x.sessioni), true], x.assistente, [fmt.format(x.citazioni_hubspot || 0), true], [x.gsc_impressioni == null ? "—" : fmt.format(x.gsc_impressioni), true], cella];
+        }), "Nessuna pagina di arrivo."),
+    ];
+  }
+
+  function renderAeo() {
+    const box = $("aeo-contenuto"); const h = D.hubspot || { stato: "in attesa" };
+    if (h.stato !== "presente") {
+      const c = el("div", "card pad");
+      c.append(el("h3", null, "In attesa dei primi dati HubSpot AEO"),
+        el("p", "muted", "Visibilità e menzioni per prompt arrivano con il primo download dei dati di HubSpot AEO nel repo del cliente, con la skill ie-aeo-hubspot-aeo."));
+      box.replaceChildren(c, ...bloccoGa4(), ...bloccoAi()); return;
+    }
+    const r = h.riepilogo || {}, cit = h.citazioni || {}, lim = h.limiti || {};
+    const intro = el("p", "muted", "Download del " + giorno(h.estrazione) + (h.periodo && h.periodo.inizio ? ", risposte dal " + giorno(h.periodo.inizio) + " al " + giorno(h.periodo.fine) : "") + (h.ultimo_run ? ". Ultimo run: " + new Date(h.ultimo_run).toLocaleDateString("it-IT") : "") + ".");
+    const k = el("div", "aeo-kpis");
+    const piccolo = (label, val, sub) => { const d = el("div", "aeo-kpi"); d.append(el("div", "eyebrow", label), el("div", "val", val)); if (sub) d.append(el("div", "sub", sub)); return d; };
+    k.append(
+      piccolo("Visibilità media", percento(r.averageVisibility), h.confronto ? "periodo precedente: " + percento(h.confronto.averageVisibility) : null),
+      piccolo("Risposte con menzione", fmt.format(r.totalRunsWithMentions || 0) + " / " + fmt.format(r.totalResponses || 0)),
+      piccolo("Citazioni di " + h.dominio, fmt.format(cit.ownedCitations || 0) + " / " + fmt.format(cit.totalCitations || 0)),
+      piccolo("Prompt tracciati", fmt.format(lim.promptsUsed || (h.prompt || []).length) + (lim.promptsCapacity ? " / " + fmt.format(lim.promptsCapacity) : "")),
+      piccolo("Competitor per risposta", (r.averageCompetitorsMentioned || 0).toLocaleString("it-IT", { maximumFractionDigits: 1 })));
+    const blocchi = [intro, k];
+
+    blocchi.push(el("h3", null, "Prompt"));
+    blocchi.push(tabella([["Prompt"], ["Pubblico e prodotti"], ["Visibilità", true], ["Menzioni", true], ["Citazioni", true], ["di " + h.dominio, true]],
+      (h.prompt || []).map((p) => [p.testo, [p.pubblico.concat(p.prodotti).join(" · ")], [percento(p.visibilita), true], [fmt.format(p.menzioni || 0) + " / " + fmt.format(p.risposte || 0), true], [fmt.format(p.citazioni || 0), true], [p.citazioni_cliente == null ? "—" : fmt.format(p.citazioni_cliente), true]]),
+      "Nessun prompt tracciato."));
+
+    const ass = h.assistenti || []; const maxc = Math.max(1, ...ass.map((a) => a.totalCitations || 0));
+    blocchi.push(el("h3", null, "Per assistente"));
+    blocchi.push(tabella([["Assistente"], ["Risposte", true], ["Con menzione", true], ["Citazioni", true], [""], ["di " + h.dominio, true]],
+      ass.map((a) => [ASSISTENTI[a.assistant] || a.assistant, [fmt.format(a.totalRuns || 0), true], [fmt.format(a.runsWithMentions || 0), true], [fmt.format(a.totalCitations || 0), true], td(barra(a.totalCitations || 0, maxc)), [fmt.format(a.ownedCitations || 0), true]]),
+      "Nessun dato per assistente."));
+
+    blocchi.push(el("h3", null, "Domini più citati"));
+    blocchi.push(tabella([["Dominio"], ["Citazioni", true], ["Chi è"]],
+      (h.domini || []).map((d) => [d.domain, [fmt.format(d.citationCount), true], d.ownedDomain ? "cliente" : d.competitorDomain ? "competitor" : "terzi"]),
+      "Nessuna citazione."));
+
+    blocchi.push(el("h3", null, "Pagine citate dagli assistenti"));
+    blocchi.push(tabella([["Pagina"], ["Citazioni", true], ["Assistenti"], ["Impressioni GSC", true]],
+      (h.url_citati || []).slice(0, 40).map((u) => { const a = el("a", "url" + (u.cliente ? " cliente" : ""), u.url.replace(/^https?:\/\//, "")); a.href = u.url; a.target = "_blank"; a.rel = "noopener"; return [td(a), [fmt.format(u.citazioni), true], u.assistenti.map((x) => ASSISTENTI[x] || x).join(", "), [u.gsc_impressioni == null ? "—" : fmt.format(u.gsc_impressioni), true]]; }),
+      "Nessun URL citato nei dettagli dei prompt."));
+
+    blocchi.push(el("h3", null, "Raccomandazioni di HubSpot"));
+    blocchi.push(tabella([["Raccomandazione"], ["Priorità"], ["Stato in HubSpot"], ["Nel piano"]],
+      (h.raccomandazioni || []).map((x) => { const b = el("button", "link-az", indiceAzioni[x.azione] ? indiceAzioni[x.azione].titolo : "Vai all'azione"); b.type = "button"; b.addEventListener("click", () => vaiAdAzione(x.azione)); return [x.titolo, x.priorita, STATI_HS[x.stato] || x.stato, td(b)]; }),
+      "Nessuna raccomandazione."));
+    blocchi.push(...bloccoGa4(), ...bloccoAi());
+    box.replaceChildren(...blocchi);
+  }
+
+  function renderMetodo() {
+    const righe = [
+      "Search Console: proprietà " + D.sito + ", ricerca web. Un caso di cannibalizzazione è una query con almeno " + fmt.format(D.soglie.min_impressioni) + " impressioni su cui la pagina concorrente prende almeno il " + pct(D.soglie.quota) + ".",
+      "Priorità: calcolata dentro ogni categoria dal traffico in gioco (impressioni contese, volume delle ricerche confermate, impressioni delle pagine con il problema tecnico). Alta dal 25% dell'azione più pesante della categoria, media dal 5%. Alcune priorità sono riviste dal consulente.",
+      "Il traffico da AI Overviews e AI Mode di Google è compreso nella ricerca web di Search Console; ChatGPT, Perplexity e gli altri assistenti si leggono da HubSpot AEO" + (D.ga4 && D.ga4.stato === "presente" ? " (visibilità) e da GA4 (visite)." : "."),
+    ];
+    if (D.ga4 && D.ga4.stato === "presente") righe.push("GA4: un'azione su pagine con almeno " + fmt.format(D.ga4.soglia) + " visite dagli assistenti AI nel periodo prende GA4 tra le fonti e sale di un livello di priorità, come una confermata da HubSpot; le due conferme insieme valgono un livello solo.");
+    if (D.ricerche) righe.push(STRUM() + ": volumi e posizioni sono stime per mercato; un'opportunità conta solo se Search Console conferma impressioni reali.");
+    if (D.ricerche && D.ricerche.ai) righe.push(STRUM() + " conta le citazioni sulle risposte degli assistenti che osserva, non su tutte: il numero dice quali pagine vengono usate come fonte, non quanta visibilità ha il brand.");
+    if (D.hubspot && D.hubspot.stato === "presente") righe.push("HubSpot AEO: le raccomandazioni che coincidono con un problema del Site Audit diventano una sua seconda fonte e alzano di un livello la sua priorità; le altre sono azioni AEO con la priorità di HubSpot. Lo stato delle raccomandazioni si aggiorna in HubSpot, la decisione del team qui.");
+    if (D.brand.length) righe.push("Query di brand escluse dalle azioni: contengono " + D.brand.join(", ") + ".");
+    if (D.confronto) righe.push("Rispetto all'estrazione Search Console del " + giorno(D.confronto.estrazione) + ": " + fmt.format(D.confronto.nuove) + " casi nuovi, " + fmt.format(D.confronto.risolte) + " risolti, " + fmt.format(D.confronto.ancora_aperte) + " ancora aperti.");
+    $("metodo").replaceChildren(el("div", "eyebrow", "Metodo e limiti"), ...righe.map((t) => el("p", null, t)));
+    $("legenda-mesi").textContent = D.mesi.length ? "da " + mese(D.mesi[0]) + " a " + mese(D.mesi[D.mesi.length - 1]) : "";
+  }
+
+  function renderDecisioni() { renderHeader(); renderTabs(); renderFiltri(); renderPiano(false); }
+
+  $("altre-azioni").addEventListener("click", () => { mostraAzioni = 1e6; renderPiano(true); });
+  $("altri-casi").addEventListener("click", () => { mostraCasi += 100; renderCasi(); });
+  let attesa = null;
+  $("cerca").addEventListener("input", () => { clearTimeout(attesa); attesa = setTimeout(() => { mostraCasi = 60; renderCasi(); }, 150); });
+  $("filtro-tipo").addEventListener("change", () => { mostraCasi = 60; renderCasi(); });
+  $("ordina").addEventListener("change", renderCasi);
+
+  async function collegaDb() {
+    const c = window.claude;
+    if (!c || !c.use) { avvisoDb("Le decisioni si vedono e si modificano solo nella dashboard pubblicata su Claude."); return; }
+    const [ns, user] = await Promise.all([c.use("db"), c.use("user")]);
+    if (!ns) { avvisoDb("Le decisioni non sono disponibili in questa vista: accedi a Claude per vederle e modificarle."); return; }
+    db = ns;
+    if (user) {
+      try { uid = await user.id(); } catch (e) { uid = null; }
+      try { if ((await user.can("data.write")) === false) { puoScrivere = false; avvisoDb("Puoi consultare le decisioni ma non modificarle."); } } catch (e) {}
+    }
+    db.collection("decisioni").onSnapshot((snap) => {
+      const nuove = {}; snap.docs.forEach((d) => { if (d.exists) nuove[d.id] = d.data(); });
+      decisioni = nuove; if (D) renderDecisioni();
+    }, () => avvisoDb("Le decisioni non si aggiornano più in tempo reale: ricarica la pagina."));
+    if (D) renderPiano(true);
+  }
+
+  fetch("dati.json").then((r) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); }).then((json) => {
+    D = json;
+    D.ricerche = D.ricerche || D.semrush || null;  // dati.json pubblicati prima dell'arrivo di Ahrefs
+    D.azioni.forEach((a) => { indiceAzioni[a.id] = a; a.hubspot = a.hubspot || []; a.keyword = a.keyword || []; a.collegate = a.collegate || []; a.fonti = a.fonti || ["Search Console"]; a.categoria = a.categoria || "cannibalizzazione"; });
+    renderHeader(); renderKpi(); renderTabs(); renderFiltri(); renderPiano(true); renderCasi(); renderPagine(); renderOpportunita(); renderAudit(); renderAeo(); renderMetodo();
+    const nome = location.hash.slice(1);
+    if (nome.startsWith("azione-")) vaiAdAzione(nome.slice(7)); else apriScheda(nome || "piano", false);
+  }).catch(() => {
+    $("takeaway").textContent = "I dati non si sono caricati: la dashboard va ripubblicata con il file dati.json dell'ultimo aggiornamento.";
+  });
+  collegaDb();
+})();
+</script>

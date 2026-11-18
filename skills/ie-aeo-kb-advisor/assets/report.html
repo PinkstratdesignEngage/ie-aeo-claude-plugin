@@ -1,0 +1,258 @@
+<title>{{TITOLO}}</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: una colonna di lettura. Prima cosa funziona, poi lo stato delle aree, poi cosa manca e il piano da filtrare per chi lo fa. */
+:root {
+  --bg: #f7f6f1; --surface: #ffffff; --ink: #1d1c17; --muted: #6a6757; --line: #e4e1d4;
+  --accent: #f2b705; --accent-soft: #fdf3cf; --accent-ink: #6e5200;
+  --alta: #b4410e; --media: #9a6a00; --bassa: #77756a; --ok: #2f7a4b; --ok-soft: #e3f1e8; --warn-soft: #fbeedb; --bad-soft: #f8e4da;
+  --font-ui: "Manrope", "Segoe UI", system-ui, sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --r: 10px;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #14130f; --surface: #1d1c17; --ink: #f2f0e6; --muted: #a9a591; --line: #33312a;
+  --accent: #f5c542; --accent-soft: #3a3115; --accent-ink: #f5d77a;
+  --alta: #f08a5d; --media: #e2b54d; --bassa: #9c998a; --ok: #6cc58f; --ok-soft: #1c3426; --warn-soft: #3a2f16; --bad-soft: #3d2219;
+  color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #14130f; --surface: #1d1c17; --ink: #f2f0e6; --muted: #a9a591; --line: #33312a;
+  --accent: #f5c542; --accent-soft: #3a3115; --accent-ink: #f5d77a;
+  --alta: #f08a5d; --media: #e2b54d; --bassa: #9c998a; --ok: #6cc58f; --ok-soft: #1c3426; --warn-soft: #3a2f16; --bad-soft: #3d2219;
+  color-scheme: dark; }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--font-ui); font-size: 15px; line-height: 1.55; }
+.wrap { max-width: 980px; margin: 0 auto; padding-block: 32px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid; gap: 40px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(1.6rem, 3.4vw, 2.3rem); font-weight: 800; letter-spacing: -0.02em; }
+h2 { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.01em; }
+h3 { font-size: 1rem; font-weight: 700; }
+p { margin: 0; }
+.eyebrow { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.muted { color: var(--muted); }
+.mono { font-family: var(--font-data); font-size: .8rem; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+header { display: grid; gap: 12px; }
+.sintesi { font-size: 1.08rem; max-width: 68ch; }
+.numeri { display: flex; flex-wrap: wrap; gap: 10px 28px; padding-top: 6px; }
+.numero { display: grid; }
+.numero .v { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.numero .e { font-size: .82rem; color: var(--muted); }
+
+section { display: grid; gap: 16px; min-width: 0; }
+.sec-head { display: grid; gap: 4px; }
+.sec-head p { color: var(--muted); max-width: 70ch; font-size: .93rem; }
+
+/* Cosa funziona: elenco con segno verde, non card */
+.funziona { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+.funziona li { display: grid; grid-template-columns: 22px minmax(0, 1fr); gap: 10px; }
+.funziona li::before { content: "✓"; color: var(--ok); font-weight: 800; background: var(--ok-soft); border-radius: 50%;
+  width: 22px; height: 22px; display: grid; place-items: center; font-size: .78rem; }
+.funziona .prova, .gap .prova { font-size: .84rem; color: var(--muted); margin-top: 2px; }
+
+/* Aree */
+.aree { display: grid; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); overflow: hidden; }
+.area { display: grid; grid-template-columns: minmax(0, 1.1fr) auto minmax(0, 2fr); gap: 6px 16px; padding: 14px 16px; align-items: start; }
+.area + .area { border-top: 1px solid var(--line); }
+.area .nome { font-weight: 700; }
+.area .metriche { font-size: .8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pill { display: inline-block; font-size: .72rem; font-weight: 800; letter-spacing: .05em; text-transform: uppercase;
+  border-radius: 999px; padding: 3px 10px; white-space: nowrap; }
+.pill.solida { background: var(--ok-soft); color: var(--ok); }
+.pill.parziale { background: var(--warn-soft); color: var(--media); }
+.pill.scoperta { background: var(--bad-soft); color: var(--alta); }
+.criteri { font-size: .82rem; color: var(--muted); max-width: 80ch; }
+
+/* Cosa manca */
+.gruppi { display: grid; gap: 22px; }
+.gruppo { display: grid; gap: 10px; }
+.gap { display: grid; gap: 2px; padding-left: 14px; border-left: 3px solid var(--line); }
+.gap .id, .voce .id { font-family: var(--font-data); font-size: .74rem; color: var(--muted); }
+.gap .rif { font-size: .8rem; color: var(--accent-ink); }
+
+/* Piano */
+.controls { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.controls .gruppo-chip { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.controls .lbl { font-size: .74rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-right: 2px; }
+.chip { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 12px; font-size: .84rem; font-weight: 600; cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.chip .n { font-variant-numeric: tabular-nums; opacity: .7; margin-left: 4px; }
+.orizzonte { display: grid; gap: 10px; }
+.orizzonte h3 { font-size: .8rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.voce { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); display: grid;
+  grid-template-columns: 5px minmax(0, 1fr); overflow: hidden; }
+.voce .stripe { background: var(--bassa); }
+.voce[data-priorita="alta"] .stripe { background: var(--alta); }
+.voce[data-priorita="media"] .stripe { background: var(--media); }
+.voce .corpo { padding: 12px 16px; display: grid; gap: 6px; min-width: 0; }
+.voce .testa { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.voce .azione { font-weight: 700; }
+.voce .meta { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: .74rem; font-weight: 700; border-radius: 6px; padding: 2px 8px; background: var(--bg); border: 1px solid var(--line); }
+.tag.chi { background: var(--accent-soft); border-color: transparent; color: var(--accent-ink); }
+.voce .sblocca { font-size: .86rem; color: var(--muted); }
+.voce[data-stato="fatto"] { opacity: .6; }
+.vuoto { color: var(--muted); font-size: .92rem; }
+
+.avanzamento { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.avanzamento li { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+footer { border-top: 1px solid var(--line); padding-top: 18px; display: grid; gap: 8px; font-size: .84rem; color: var(--muted); }
+footer ul { margin: 0; padding-left: 18px; }
+
+@media (max-width: 640px) {
+  .area { grid-template-columns: minmax(0, 1fr) auto; }
+  .area .perche { grid-column: 1 / -1; }
+}
+@media (prefers-reduced-motion: no-preference) { .voce { transition: opacity .15s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow"></div>
+    <h1>{{TITOLO}}</h1>
+    <p class="sintesi" id="sintesi"></p>
+    <div class="numeri" id="numeri"></div>
+  </header>
+
+  <section aria-labelledby="h-funziona">
+    <div class="sec-head"><h2 id="h-funziona">Cosa funziona</h2>
+      <p>Le parti della knowledge base su cui i contenuti possono già contare.</p></div>
+    <ul class="funziona" id="funziona"></ul>
+  </section>
+
+  <section aria-labelledby="h-aree">
+    <div class="sec-head"><h2 id="h-aree">Stato per area</h2></div>
+    <div class="aree" id="aree"></div>
+    <p class="criteri" id="criteri"></p>
+  </section>
+
+  <section aria-labelledby="h-gap">
+    <div class="sec-head"><h2 id="h-gap">Cosa manca</h2>
+      <p>Le informazioni che mancano o non sono confermate, raggruppate per tipo. Ogni voce rimanda all'azione del piano che la risolve.</p></div>
+    <div class="gruppi" id="gap"></div>
+  </section>
+
+  <section aria-labelledby="h-piano">
+    <div class="sec-head"><h2 id="h-piano">Piano</h2>
+      <p>Le azioni in ordine di tempo e priorità. Filtra per chi le fa o per tipo.</p></div>
+    <div class="controls" id="filtri"></div>
+    <div class="gruppi" id="piano"></div>
+  </section>
+
+  <section aria-labelledby="h-avanz" id="sez-avanz" hidden>
+    <div class="sec-head"><h2 id="h-avanz">Rispetto al report precedente</h2></div>
+    <ul class="avanzamento" id="avanzamento"></ul>
+  </section>
+
+  <footer id="metodo"></footer>
+</div>
+
+<script id="dati" type="application/json">{{DATI}}</script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById("dati").textContent);
+  const $ = (id) => document.getElementById(id);
+  const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+  const TIPI = { materiale: "Materiali da recuperare", domanda: "Domande da porre", fonte: "Fonti da collegare",
+    decisione: "Decisioni da prendere", task: "Lavori sulla knowledge base", coerenza: "Coerenza da sistemare" };
+  const ORIZZ = ["subito", "questo mese", "prossimi mesi"];
+  const PRI = { alta: 0, media: 1, bassa: 2 };
+  const data = new Date(D.data + "T12:00:00").toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" });
+
+  $("eyebrow").textContent = `Analisi della knowledge base · ${data}`;
+  $("sintesi").textContent = D.sintesi || "";
+  (D.numeri || []).forEach((n) => { const b = el("div", "numero"); b.append(el("span", "v", n.valore), el("span", "e", n.etichetta)); $("numeri").append(b); });
+
+  (D.funziona || []).forEach((f) => { const li = el("li"); const d = el("div"); d.append(el("h3", null, f.titolo), el("p", null, f.testo));
+    if (f.prova) d.append(el("p", "prova", f.prova)); li.append(d); $("funziona").append(li); });
+
+  (D.aree || []).forEach((a) => {
+    const r = el("div", "area");
+    const n = el("div"); n.append(el("div", "nome", a.nome || a.area),
+      el("div", "metriche", `${a.file} file · ${a.citazioni} citazioni · ${a.da_validare} da validare · ${a.da_raccogliere ?? 0} da raccogliere · ${a.domande_aperte} domande · ${a.validati ?? 0}/${a.file} validati`));
+    r.append(n, el("span", `pill ${a.livello}`, a.livello), el("p", "perche", a.perche));
+    $("aree").append(r);
+  });
+  $("criteri").textContent = D.criteri || "";
+
+  const idPiano = {}; (D.piano || []).forEach((p) => (idPiano[p.id] = p));
+  const perTipo = {};
+  (D.gap || []).forEach((g) => (perTipo[g.tipo] = perTipo[g.tipo] || []).push(g));
+  Object.keys(TIPI).filter((t) => perTipo[t]).forEach((t) => {
+    const box = el("div", "gruppo"); box.append(el("h3", null, `${TIPI[t]} (${perTipo[t].length})`));
+    perTipo[t].forEach((g) => {
+      const v = el("div", "gap"); v.id = g.id;
+      const testa = el("div"); testa.append(el("span", "id", g.id + " "), el("strong", null, g.titolo));
+      v.append(testa, el("p", null, g.testo));
+      if (g.prova) v.append(el("p", "prova", g.prova));
+      if ((g.piano || []).length) v.append(el("p", "rif", "Nel piano: " + g.piano.join(", ")));
+      box.append(v);
+    });
+    $("gap").append(box);
+  });
+
+  const filtri = { chi: "tutti", tipo: "tutti" };
+  const chiDi = (p) => (p.chi || "").split(" · ")[0];
+  function gruppoChip(nome, chiave, valori) {
+    const g = el("div", "gruppo-chip"); g.append(el("span", "lbl", nome));
+    ["tutti", ...valori].forEach((v) => {
+      const b = el("button", "chip"); b.type = "button"; b.dataset.k = chiave; b.dataset.v = v;
+      b.append(v === "tutti" ? "Tutti" : (TIPI[v] ? TIPI[v].split(" ")[0] : v));
+      const n = v === "tutti" ? D.piano.length : D.piano.filter((p) => (chiave === "chi" ? chiDi(p) : p.tipo) === v).length;
+      b.append(el("span", "n", String(n)));
+      b.setAttribute("aria-pressed", String(filtri[chiave] === v));
+      b.addEventListener("click", () => { filtri[chiave] = v; salva(); disegna(); });
+      g.append(b);
+    });
+    return g;
+  }
+  function salva() { try { localStorage.setItem("kb-advisor-filtri", JSON.stringify(filtri)); } catch (e) {} }
+  try { Object.assign(filtri, JSON.parse(localStorage.getItem("kb-advisor-filtri") || "{}")); } catch (e) {}
+
+  function disegna() {
+    const chi = [...new Set((D.piano || []).map(chiDi))];
+    const tipi = Object.keys(TIPI).filter((t) => (D.piano || []).some((p) => p.tipo === t));
+    if (!chi.includes(filtri.chi)) filtri.chi = "tutti";
+    if (!tipi.includes(filtri.tipo)) filtri.tipo = "tutti";
+    $("filtri").replaceChildren(gruppoChip("Chi", "chi", chi), gruppoChip("Tipo", "tipo", tipi));
+    $("piano").replaceChildren();
+    const voci = (D.piano || []).filter((p) => (filtri.chi === "tutti" || chiDi(p) === filtri.chi) && (filtri.tipo === "tutti" || p.tipo === filtri.tipo));
+    if (!voci.length) { $("piano").append(el("p", "vuoto", "Nessuna azione con questi filtri.")); return; }
+    ORIZZ.forEach((o) => {
+      const qui = voci.filter((p) => p.orizzonte === o).sort((a, b) => (PRI[a.priorita] ?? 3) - (PRI[b.priorita] ?? 3));
+      if (!qui.length) return;
+      const box = el("div", "orizzonte"); box.append(el("h3", null, `${o} · ${qui.length}`));
+      qui.forEach((p) => {
+        const v = el("article", "voce"); v.dataset.priorita = p.priorita; v.dataset.stato = p.stato || "da fare";
+        const c = el("div", "corpo");
+        const testa = el("div", "testa"); testa.append(el("span", "id", p.id), el("span", "azione", p.azione)); c.append(testa);
+        if (p.dettaglio) c.append(el("p", null, p.dettaglio));
+        const meta = el("div", "meta");
+        meta.append(el("span", "tag chi", p.chi), el("span", "tag", (TIPI[p.tipo] || p.tipo).split(" ")[0]), el("span", "tag", `priorità ${p.priorita}`));
+        if (p.sforzo) meta.append(el("span", "tag", p.sforzo));
+        if (p.stato && p.stato !== "da fare") meta.append(el("span", "tag", p.stato));
+        c.append(meta);
+        if (p.sblocca) c.append(el("p", "sblocca", "Sblocca: " + p.sblocca));
+        v.append(el("div", "stripe"), c); box.append(v);
+      });
+      $("piano").append(box);
+    });
+  }
+  disegna();
+
+  if ((D.avanzamento || []).length) {
+    $("sez-avanz").hidden = false;
+    D.avanzamento.forEach((a) => { const li = el("li"); li.append(el("span", "id mono", a.id), el("span", "tag", a.stato), el("span", null, a.azione + (a.nota ? ": " + a.nota : ""))); $("avanzamento").append(li); });
+  }
+
+  const m = $("metodo");
+  if (D.metodo) m.append(el("p", null, D.metodo));
+  if ((D.fonti || []).length) { const ul = el("ul"); D.fonti.forEach((f) => ul.append(el("li", null, f))); m.append(el("p", null, "Basato su:"), ul); }
+})();
+</script>

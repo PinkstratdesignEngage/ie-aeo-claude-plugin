@@ -1,0 +1,20 @@
+{
+  "name": "ie-aeo",
+  "version": "0.32.2",
+  "description": "Strumenti per i progetti AEO: costruzione della knowledge base del cliente, creazione e revisione dei contenuti. Come funziona: https://ie-aeo-plugin-tutorial.vercel.app/",
+  "author": {
+    "name": "IE-AEO"
+  },
+  "keywords": [
+    "aeo",
+    "knowledge-base",
+    "content",
+    "hubspot",
+    "search-console",
+    "audit-tecnico",
+    "semrush",
+    "ahrefs",
+    "knowledge-graph",
+    "ricerca-semantica"
+  ]
+}

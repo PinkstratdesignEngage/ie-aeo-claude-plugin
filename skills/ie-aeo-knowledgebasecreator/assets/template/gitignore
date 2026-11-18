@@ -1,0 +1,19 @@
+# Materiale grezzo e note interne dell'agenzia: non va mai pubblicato
+_privato/
+
+# Sistema
+.DS_Store
+
+# Indice di ricerca su raw/: si rigenera e si scarica dal Package Registry di GitLab (skill ie-aeo-indice-raw)
+.indice/
+.indice.nuovo/
+.indice.vecchio/
+
+# Impostazioni personali di Claude Code
+.claude/settings.local.json
+
+# Credenziali Google (Search Console, Analytics): mai nel repo
+client_secret*.json
+*service-account*.json
+credenziali*.json
+token.json

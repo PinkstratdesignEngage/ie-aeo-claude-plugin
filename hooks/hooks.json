@@ -1,0 +1,27 @@
+{
+  "description": "Aggiornamento dati IE-AEO: all'avvio controlla Search Console, lo strumento di ricerca (Semrush o Ahrefs) e HubSpot AEO del cliente; aggiorna HubSpot AEO (sola lettura) e propone le altre fonti quando i dati superano la frequenza configurata. Propone anche il piano editoriale del mese, la revisione dei prompt, l'analisi della knowledge base e la mappa della knowledge base quando i file sono cambiati, se il cliente li ha configurati. Fa scaricare l'indice di ricerca su raw/ quando manca e propone di aggiornarlo quando raw/ è cambiato. A fine turno, se la knowledge base è cambiata dopo l'ultima mappa, fa chiedere se rigenerarla.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/controlla_aggiornamenti.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/hooks/proponi_mappa.py\"",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

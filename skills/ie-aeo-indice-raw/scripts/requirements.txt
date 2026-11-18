@@ -1,0 +1,14 @@
+# Ambiente completo: costruire l'indice e cercare con la ricerca ibrida.
+# Versioni bloccate: indici costruiti da persone diverse devono avere estrazione e vettori identici.
+# Se le cambi, aumenta anche FORMATO in indice.py quando cambia il risultato dell'estrazione.
+docling==2.145.0
+docling-core==2.105.0
+docling-ibm-models==4.0.4
+lancedb==0.41.0
+pyarrow==26.0.0
+sentence-transformers==6.2.0
+transformers==5.22.1
+torch==2.15.0
+huggingface-hub==1.33.0
+numpy==2.5.4
+pandas==3.1.0
